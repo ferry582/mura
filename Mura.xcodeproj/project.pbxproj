@@ -13,8 +13,10 @@
 		E620337F2A4DC37C00AC6810 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620337E2A4DC37C00AC6810 /* DashboardViewController.swift */; };
 		E62033842A4DC37D00AC6810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E62033832A4DC37D00AC6810 /* Assets.xcassets */; };
 		E62033872A4DC37D00AC6810 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E62033852A4DC37D00AC6810 /* LaunchScreen.storyboard */; };
+		E6678D682AC6C2420079B086 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6678D672AC6C2420079B086 /* Date+Ext.swift */; };
 		E69E77012ABD4BB900B99F04 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E77002ABD4BB900B99F04 /* UIColor+Ext.swift */; };
 		E69E77032ABD4E3800B99F04 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E69E77022ABD4E3800B99F04 /* Colors.xcassets */; };
+		E6A928312AC55A3D00A3308C /* MonthYearWheelPicker in Frameworks */ = {isa = PBXBuildFile; productRef = E6A928302AC55A3D00A3308C /* MonthYearWheelPicker */; };
 		E6C5683E2ABFDFF500C5E1F0 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C5683D2ABFDFF500C5E1F0 /* ReportView.swift */; };
 		E6C568402AC14A9100C5E1F0 /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C5683F2AC14A9100C5E1F0 /* UIImageView+Ext.swift */; };
 		E6D3A4342A654EBB00675AF1 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D3A4332A654EBB00675AF1 /* DashboardView.swift */; };
@@ -29,6 +31,7 @@
 		E62033832A4DC37D00AC6810 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E62033862A4DC37D00AC6810 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E62033882A4DC37D00AC6810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E6678D672AC6C2420079B086 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		E69E77002ABD4BB900B99F04 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
 		E69E77022ABD4E3800B99F04 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		E6C5683D2ABFDFF500C5E1F0 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
@@ -41,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6A928312AC55A3D00A3308C /* MonthYearWheelPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,6 +162,7 @@
 			children = (
 				E69E77002ABD4BB900B99F04 /* UIColor+Ext.swift */,
 				E6C5683F2AC14A9100C5E1F0 /* UIImageView+Ext.swift */,
+				E6678D672AC6C2420079B086 /* Date+Ext.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -250,6 +255,9 @@
 			dependencies = (
 			);
 			name = Mura;
+			packageProductDependencies = (
+				E6A928302AC55A3D00A3308C /* MonthYearWheelPicker */,
+			);
 			productName = Mura;
 			productReference = E62033772A4DC37C00AC6810 /* Mura.app */;
 			productType = "com.apple.product-type.application";
@@ -278,6 +286,9 @@
 				Base,
 			);
 			mainGroup = E620336E2A4DC37C00AC6810;
+			packageReferences = (
+				E6A9282F2AC55A3D00A3308C /* XCRemoteSwiftPackageReference "MonthYearWheelPicker" */,
+			);
 			productRefGroup = E62033782A4DC37C00AC6810 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -305,6 +316,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6678D682AC6C2420079B086 /* Date+Ext.swift in Sources */,
 				E61F3AF82AC3EE0500F72A2F /* ReportViewModel.swift in Sources */,
 				E620337F2A4DC37C00AC6810 /* DashboardViewController.swift in Sources */,
 				E6D3A4342A654EBB00675AF1 /* DashboardView.swift in Sources */,
@@ -453,7 +465,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3RQ4DU9X9P;
+				DEVELOPMENT_TEAM = 72Y28H39U9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Mura/Supporting Files/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -481,7 +493,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3RQ4DU9X9P;
+				DEVELOPMENT_TEAM = 72Y28H39U9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Mura/Supporting Files/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -524,6 +536,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E6A9282F2AC55A3D00A3308C /* XCRemoteSwiftPackageReference "MonthYearWheelPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bendodson/MonthYearWheelPicker.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E6A928302AC55A3D00A3308C /* MonthYearWheelPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E6A9282F2AC55A3D00A3308C /* XCRemoteSwiftPackageReference "MonthYearWheelPicker" */;
+			productName = MonthYearWheelPicker;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E620336F2A4DC37C00AC6810 /* Project object */;
 }

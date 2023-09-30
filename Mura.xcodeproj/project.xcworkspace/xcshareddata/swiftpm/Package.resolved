@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "monthyearwheelpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/bendodson/MonthYearWheelPicker.git",
+      "state" : {
+        "revision" : "b6fdaf380d1e439e1a639ad94ed744a735632d61",
+        "version" : "1.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
