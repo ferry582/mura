@@ -8,7 +8,7 @@
 import Foundation
 
 extension Date {
-    func convertToString() -> String {
+    func convertToMonthYearString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM yyyy"
         dateFormatter.locale = Locale(identifier: Locale.current.identifier)

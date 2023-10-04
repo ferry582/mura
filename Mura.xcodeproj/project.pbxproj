@@ -19,7 +19,10 @@
 		E6A928312AC55A3D00A3308C /* MonthYearWheelPicker in Frameworks */ = {isa = PBXBuildFile; productRef = E6A928302AC55A3D00A3308C /* MonthYearWheelPicker */; };
 		E6C5683E2ABFDFF500C5E1F0 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C5683D2ABFDFF500C5E1F0 /* ReportView.swift */; };
 		E6C568402AC14A9100C5E1F0 /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C5683F2AC14A9100C5E1F0 /* UIImageView+Ext.swift */; };
-		E6D3A4342A654EBB00675AF1 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D3A4332A654EBB00675AF1 /* DashboardView.swift */; };
+		E6C9B8CD2AC867A100989A32 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9B8CC2AC867A100989A32 /* TransactionEntity.swift */; };
+		E6C9B8CF2AC9C92100989A32 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9B8CE2AC9C92100989A32 /* TransactionCell.swift */; };
+		E6C9B8D12AC9CE0700989A32 /* TransactionSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9B8D02AC9CE0700989A32 /* TransactionSectionHeader.swift */; };
+		E6D3A4342A654EBB00675AF1 /* DashboardHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D3A4332A654EBB00675AF1 /* DashboardHeaderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,7 +39,10 @@
 		E69E77022ABD4E3800B99F04 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		E6C5683D2ABFDFF500C5E1F0 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		E6C5683F2AC14A9100C5E1F0 /* UIImageView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Ext.swift"; sourceTree = "<group>"; };
-		E6D3A4332A654EBB00675AF1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		E6C9B8CC2AC867A100989A32 /* TransactionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionEntity.swift; sourceTree = "<group>"; };
+		E6C9B8CE2AC9C92100989A32 /* TransactionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
+		E6C9B8D02AC9CE0700989A32 /* TransactionSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSectionHeader.swift; sourceTree = "<group>"; };
+		E6D3A4332A654EBB00675AF1 /* DashboardHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +111,7 @@
 		E61927262AAB054C00E5DF0B /* Entity */ = {
 			isa = PBXGroup;
 			children = (
+				E6C9B8CC2AC867A100989A32 /* TransactionEntity.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -178,9 +185,11 @@
 			isa = PBXGroup;
 			children = (
 				E620337E2A4DC37C00AC6810 /* DashboardViewController.swift */,
-				E6D3A4332A654EBB00675AF1 /* DashboardView.swift */,
+				E6D3A4332A654EBB00675AF1 /* DashboardHeaderView.swift */,
 				E6C5683D2ABFDFF500C5E1F0 /* ReportView.swift */,
 				E61F3AF72AC3EE0500F72A2F /* ReportViewModel.swift */,
+				E6C9B8CE2AC9C92100989A32 /* TransactionCell.swift */,
+				E6C9B8D02AC9CE0700989A32 /* TransactionSectionHeader.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -318,11 +327,14 @@
 			files = (
 				E6678D682AC6C2420079B086 /* Date+Ext.swift in Sources */,
 				E61F3AF82AC3EE0500F72A2F /* ReportViewModel.swift in Sources */,
+				E6C9B8CF2AC9C92100989A32 /* TransactionCell.swift in Sources */,
 				E620337F2A4DC37C00AC6810 /* DashboardViewController.swift in Sources */,
-				E6D3A4342A654EBB00675AF1 /* DashboardView.swift in Sources */,
+				E6D3A4342A654EBB00675AF1 /* DashboardHeaderView.swift in Sources */,
+				E6C9B8D12AC9CE0700989A32 /* TransactionSectionHeader.swift in Sources */,
 				E6C5683E2ABFDFF500C5E1F0 /* ReportView.swift in Sources */,
 				E69E77012ABD4BB900B99F04 /* UIColor+Ext.swift in Sources */,
 				E620337B2A4DC37C00AC6810 /* AppDelegate.swift in Sources */,
+				E6C9B8CD2AC867A100989A32 /* TransactionEntity.swift in Sources */,
 				E620337D2A4DC37C00AC6810 /* SceneDelegate.swift in Sources */,
 				E6C568402AC14A9100C5E1F0 /* UIImageView+Ext.swift in Sources */,
 			);

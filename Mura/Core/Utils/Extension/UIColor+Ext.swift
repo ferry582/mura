@@ -35,5 +35,9 @@ extension UIColor {
     static var negativeAmount: UIColor {
         UIColor(named: "NegativeAmountColor")!
     }
+    
+    static var separator: UIColor {
+        UIColor(named: "SeparatorColor")!
+    }
 }
 
