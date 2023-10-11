@@ -12,7 +12,6 @@
 		E620337D2A4DC37C00AC6810 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620337C2A4DC37C00AC6810 /* SceneDelegate.swift */; };
 		E620337F2A4DC37C00AC6810 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620337E2A4DC37C00AC6810 /* DashboardViewController.swift */; };
 		E62033842A4DC37D00AC6810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E62033832A4DC37D00AC6810 /* Assets.xcassets */; };
-		E62033872A4DC37D00AC6810 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E62033852A4DC37D00AC6810 /* LaunchScreen.storyboard */; };
 		E6678D682AC6C2420079B086 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6678D672AC6C2420079B086 /* Date+Ext.swift */; };
 		E69E77012ABD4BB900B99F04 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69E77002ABD4BB900B99F04 /* UIColor+Ext.swift */; };
 		E69E77032ABD4E3800B99F04 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E69E77022ABD4E3800B99F04 /* Colors.xcassets */; };
@@ -23,6 +22,8 @@
 		E6C9B8CF2AC9C92100989A32 /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9B8CE2AC9C92100989A32 /* TransactionCell.swift */; };
 		E6C9B8D12AC9CE0700989A32 /* TransactionSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C9B8D02AC9CE0700989A32 /* TransactionSectionHeader.swift */; };
 		E6D3A4342A654EBB00675AF1 /* DashboardHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D3A4332A654EBB00675AF1 /* DashboardHeaderView.swift */; };
+		E6F016E92AD1D2CE0074140B /* TransactionFormTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F016E82AD1D2CE0074140B /* TransactionFormTableView.swift */; };
+		E6F016EB2AD274830074140B /* AddTransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F016EA2AD274830074140B /* AddTransactionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +33,6 @@
 		E620337C2A4DC37C00AC6810 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		E620337E2A4DC37C00AC6810 /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		E62033832A4DC37D00AC6810 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E62033862A4DC37D00AC6810 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E62033882A4DC37D00AC6810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E6678D672AC6C2420079B086 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		E69E77002ABD4BB900B99F04 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
@@ -43,6 +43,8 @@
 		E6C9B8CE2AC9C92100989A32 /* TransactionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
 		E6C9B8D02AC9CE0700989A32 /* TransactionSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSectionHeader.swift; sourceTree = "<group>"; };
 		E6D3A4332A654EBB00675AF1 /* DashboardHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardHeaderView.swift; sourceTree = "<group>"; };
+		E6F016E82AD1D2CE0074140B /* TransactionFormTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFormTableView.swift; sourceTree = "<group>"; };
+		E6F016EA2AD274830074140B /* AddTransactionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 		E61927212AAB050A00E5DF0B /* Module */ = {
 			isa = PBXGroup;
 			children = (
+				E66DC6AA2ACDA21300F296A9 /* Transaction */,
 				E619272F2AAB20F300E5DF0B /* Dashboard */,
 			);
 			path = Module;
@@ -156,9 +159,6 @@
 		E619272C2AAB07CE00E5DF0B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				E62033832A4DC37D00AC6810 /* Assets.xcassets */,
-				E69E77022ABD4E3800B99F04 /* Colors.xcassets */,
-				E62033852A4DC37D00AC6810 /* LaunchScreen.storyboard */,
 				E62033882A4DC37D00AC6810 /* Info.plist */,
 			);
 			path = "Supporting Files";
@@ -177,6 +177,7 @@
 		E619272E2AAB08AA00E5DF0B /* View Component */ = {
 			isa = PBXGroup;
 			children = (
+				E6F016E82AD1D2CE0074140B /* TransactionFormTableView.swift */,
 			);
 			path = "View Component";
 			sourceTree = "<group>";
@@ -223,16 +224,42 @@
 				E682A3F32A7E2C3100FB2164 /* App */,
 				E69E76FF2ABB60F200B99F04 /* Core */,
 				E61927212AAB050A00E5DF0B /* Module */,
-				E619272C2AAB07CE00E5DF0B /* Supporting Files */,
 			);
 			path = Mura;
+			sourceTree = "<group>";
+		};
+		E66DC6AA2ACDA21300F296A9 /* Transaction */ = {
+			isa = PBXGroup;
+			children = (
+				E6F016EA2AD274830074140B /* AddTransactionViewController.swift */,
+			);
+			path = Transaction;
+			sourceTree = "<group>";
+		};
+		E66DC6AF2ACDC15500F296A9 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				E620337A2A4DC37C00AC6810 /* AppDelegate.swift */,
+				E620337C2A4DC37C00AC6810 /* SceneDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		E66DC6B02ACDC17400F296A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E62033832A4DC37D00AC6810 /* Assets.xcassets */,
+				E69E77022ABD4E3800B99F04 /* Colors.xcassets */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		E682A3F32A7E2C3100FB2164 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				E620337A2A4DC37C00AC6810 /* AppDelegate.swift */,
-				E620337C2A4DC37C00AC6810 /* SceneDelegate.swift */,
+				E66DC6B02ACDC17400F296A9 /* Resources */,
+				E66DC6AF2ACDC15500F296A9 /* Delegates */,
+				E619272C2AAB07CE00E5DF0B /* Supporting Files */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -313,7 +340,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E69E77032ABD4E3800B99F04 /* Colors.xcassets in Resources */,
-				E62033872A4DC37D00AC6810 /* LaunchScreen.storyboard in Resources */,
 				E62033842A4DC37D00AC6810 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -328,8 +354,10 @@
 				E6678D682AC6C2420079B086 /* Date+Ext.swift in Sources */,
 				E61F3AF82AC3EE0500F72A2F /* ReportViewModel.swift in Sources */,
 				E6C9B8CF2AC9C92100989A32 /* TransactionCell.swift in Sources */,
+				E6F016E92AD1D2CE0074140B /* TransactionFormTableView.swift in Sources */,
 				E620337F2A4DC37C00AC6810 /* DashboardViewController.swift in Sources */,
 				E6D3A4342A654EBB00675AF1 /* DashboardHeaderView.swift in Sources */,
+				E6F016EB2AD274830074140B /* AddTransactionViewController.swift in Sources */,
 				E6C9B8D12AC9CE0700989A32 /* TransactionSectionHeader.swift in Sources */,
 				E6C5683E2ABFDFF500C5E1F0 /* ReportView.swift in Sources */,
 				E69E77012ABD4BB900B99F04 /* UIColor+Ext.swift in Sources */,
@@ -341,17 +369,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		E62033852A4DC37D00AC6810 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E62033862A4DC37D00AC6810 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		E62033892A4DC37D00AC6810 /* Debug */ = {
@@ -479,7 +496,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 72Y28H39U9;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Mura/Supporting Files/Info.plist";
+				INFOPLIST_FILE = "Mura/App/Supporting Files/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -507,7 +524,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 72Y28H39U9;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Mura/Supporting Files/Info.plist";
+				INFOPLIST_FILE = "Mura/App/Supporting Files/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

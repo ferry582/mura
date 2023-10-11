@@ -19,34 +19,6 @@ class DashboardViewController: UIViewController {
     ]
     private var datePickerBottomConstraint: NSLayoutConstraint?
     
-    // MARK: Life Cycle
-    init(_ reportViewModel: ReportViewModel = ReportViewModel()) {
-        self.reportViewModel = reportViewModel
-        super.init(nibName: nil, bundle: nil)
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupNavBar()
-        setupView()
-        
-        self.dashboardTableView.delegate = self
-        self.dashboardTableView.dataSource = self
-        
-        dashboardTableViewHeader.didTapDateButton = {
-            self.monthYearDatePicker.isHidden = false
-            self.toolbar.isHidden = false
-            self.animateDatePicker(to: 0)
-        }
-        
-        dashboardTableViewHeader.balancePercentText = reportViewModel.getBalancePercentText()
-    }
-    
     // MARK: - UI Components
     private let dashboardTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
@@ -62,7 +34,7 @@ class DashboardViewController: UIViewController {
     
     private let dashboardTableViewHeader: DashboardHeaderView = {
         let view = DashboardHeaderView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
+        //        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -96,6 +68,34 @@ class DashboardViewController: UIViewController {
         return toolbar
     }()
     
+    // MARK: Life Cycle
+    init(_ reportViewModel: ReportViewModel = ReportViewModel()) {
+        self.reportViewModel = reportViewModel
+        super.init(nibName: nil, bundle: nil)
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavBar()
+        setupView()
+        
+        self.dashboardTableView.delegate = self
+        self.dashboardTableView.dataSource = self
+        
+        dashboardTableViewHeader.didTapDateButton = {
+            self.monthYearDatePicker.isHidden = false
+            self.toolbar.isHidden = false
+            self.animateDatePicker(to: 0)
+        }
+        
+        dashboardTableViewHeader.balancePercentText = reportViewModel.getBalancePercentText()
+    }
+    
     // MARK: - UI Setup
     private func setupNavBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -103,6 +103,7 @@ class DashboardViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.textMain]
         
         navigationItem.title = "Dashboard"
+        navigationItem.titleView?.tintColor = UIColor.textMain
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTapped))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.main
     }
@@ -112,7 +113,7 @@ class DashboardViewController: UIViewController {
         
         dashboardTableViewHeader.frame = CGRect(x: 0, y: 0, width: dashboardTableView.frame.size.width, height: 305) // Height still hardcoded, because there is a bug when using constraint (there is extra space between header and cells)
         dashboardTableView.tableHeaderView = dashboardTableViewHeader
-//        dashboardTableView.tableHeaderView?.layoutIfNeeded()
+        //        dashboardTableView.tableHeaderView?.layoutIfNeeded()
         
         view.addSubview(dashboardTableView)
         view.addSubview(monthYearDatePicker)
@@ -126,7 +127,7 @@ class DashboardViewController: UIViewController {
             dashboardTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             dashboardTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-//            dashboardTableViewHeader.widthAnchor.constraint(equalTo: dashboardTableView.widthAnchor),
+            //            dashboardTableViewHeader.widthAnchor.constraint(equalTo: dashboardTableView.widthAnchor),
             
             monthYearDatePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             monthYearDatePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -141,7 +142,14 @@ class DashboardViewController: UIViewController {
     
     // MARK: - Setup Action
     @objc private func addTapped() {
-        print("add button tapped")
+        
+        let vc = AddTransactionViewController()
+        let navigationController = UINavigationController(rootViewController: vc)
+        if let sheet = navigationController.sheetPresentationController {
+            sheet.detents = [.large()]
+        }
+        present(navigationController, animated: true)
+        
     }
     
     @objc func doneButtonTapped() {

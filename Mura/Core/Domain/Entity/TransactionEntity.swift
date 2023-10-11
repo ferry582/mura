@@ -7,16 +7,16 @@
 
 import Foundation
 
-enum TransactionType {
-    case expense
-    case income
+enum TransactionType: String {
+    case expense = "Expense"
+    case income = "Income"
 }
 
 struct TransactionEntity {
 //    let id
     let date: Date
     let category: String
-    let note: String
+    let note: String?
     let amount: Double
     let type: TransactionType
     
