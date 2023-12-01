@@ -208,15 +208,11 @@ class ReportView: UIView {
         
         // Expense Card StackView
         vstackExpenseIcon.addArrangedSubview(expenseIconImage) // Set icon equal to vstackExpenseCard trailing
-        vstackExpenseCard.addArrangedSubview(vstackExpenseIcon)
-        vstackExpenseCard.addArrangedSubview(expenseTitleLabel)
-        vstackExpenseCard.addArrangedSubview(expenseAmountLabel)
+        [vstackExpenseIcon, expenseTitleLabel, expenseAmountLabel].forEach {vstackExpenseCard.addArrangedSubview($0)}
         
         // Income Card StackView
         vstackIncomeIcon.addArrangedSubview(incomeIconImage) // Set icon equal to vstackIncomeCard trailing
-        vstackIncomeCard.addArrangedSubview(vstackIncomeIcon)
-        vstackIncomeCard.addArrangedSubview(incomeTitleLabel)
-        vstackIncomeCard.addArrangedSubview(incomeAmountLabel)
+        [vstackIncomeIcon, incomeTitleLabel, incomeAmountLabel].forEach {vstackIncomeCard.addArrangedSubview($0)}
         
         // Expense and Income HStackView
         hstackExpenseIncomeCard.addArrangedSubview(vstackExpenseCard)

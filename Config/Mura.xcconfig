@@ -1,0 +1,15 @@
+//
+//  Mura.xcconfig
+//  Mura
+//
+//  Created by Ferry Dwianta P on 28/11/23.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+VERSION_NAME = 1.0.0
+BUILD_NUMBER = 1
+PRODUCT_BUNDLE_IDENTIFIER = com.ferry.Mura
+PRODUCT_NAME = Mura
+IPHONEOS_DEPLOYMENT_TARGET = 16.0

@@ -1,0 +1,64 @@
+name: Mura
+configs:
+  Mura-DEV: debug
+  Mura: release
+configFiles:
+  Mura-DEV: Config/Mura-DEV.xcconfig
+  Mura: Config/Mura.xcconfig
+settings:
+  base:
+    # USER DEFINED PROJECT
+    BUILD_NUMBER: $(BUILD_NUMBER)
+    VERSION_NAME: $(VERSION_NAME)
+    CURRENT_PROJECT_VERSION: $(BUILD_NUMBER)
+    MARKETING_VERSION: $(VERSION_NAME)
+targets:
+  Mura:
+    type: application
+    platform: iOS
+    deploymentTargets:
+      iOS: $(IPHONEOS_DEPLOYMENT_TARGET)
+    sources:
+      - path: Mura
+        name: Mura
+    settings:
+      base:
+      # USER DEFINED TARGET
+        INFOPLIST_FILE: Mura/App/Supporting Files/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+      configs:
+        Mura-DEV:
+          PRODUCT_BUNDLE_IDENTIFIER: $(PRODUCT_BUNDLE_IDENTIFIER)
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          PRODUCT_NAME: Mura
+          DEVELOPMENT_TEAM: G3AYHKZCLN
+        Mura:
+          PRODUCT_BUNDLE_IDENTIFIER: $(PRODUCT_BUNDLE_IDENTIFIER)
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
+          PRODUCT_NAME: Mura
+          DEVELOPMENT_TEAM: G3AYHKZCLN
+schemes:
+  Mura:
+    build:
+      targets:
+        Mura: all
+    run:
+      config: Mura
+    profile:
+      config: Mura
+    analyze:
+      config: Mura
+    archive: Mura
+  Mura-DEV:
+    build:
+      targets:
+        Mura: all
+    run:
+      config: Mura-DEV
+    profile:
+      config: Mura-DEV
+    analyze:
+      config: Mura-DEV
+    archive:
+      config: Mura-DEV
+

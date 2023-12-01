@@ -109,6 +109,7 @@ class TransactionFormTableView: UITableView {
     private let datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .date
+        picker.tintColor = UIColor.main
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return picker
@@ -263,9 +264,10 @@ class TransactionFormTableView: UITableView {
     @objc private func typeSegmentedChanged() {
         switch typeSegmentedControl.selectedSegmentIndex {
         case 0:
-            print("New Option 1 selected")
+            self.categoryTextField.text = "None"
+            // change categorypicker data source
         case 1:
-            print("New Option 2 selected")
+            self.categoryTextField.text = "None"
         default:
             break
         }
