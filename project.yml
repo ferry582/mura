@@ -1,4 +1,8 @@
 name: Mura
+packages:
+  MonthYearWheelPicker:
+    url: https://github.com/bendodson/MonthYearWheelPicker
+    from: 1.0.1
 configs:
   Mura-DEV: debug
   Mura: release
@@ -37,6 +41,8 @@ targets:
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
           PRODUCT_NAME: Mura
           DEVELOPMENT_TEAM: G3AYHKZCLN
+    dependencies:
+      - package: MonthYearWheelPicker
 schemes:
   Mura:
     build:

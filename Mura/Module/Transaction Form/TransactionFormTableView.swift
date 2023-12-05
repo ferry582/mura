@@ -22,64 +22,6 @@ class NoCursorTextField: UITextField {
     }
 }
 
-class TransactionFormCell: UITableViewCell {
-    
-    // MARK: - Variables
-    var didSelect: (() -> Void)?
-    
-    // MARK: - UI Components
-    private let separatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.separator
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    // MARK: Life Cycle
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        self.backgroundColor = UIColor.cardBg
-        self.setupSeparatorView()
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - UI Setup
-    func setupSeparatorView() {
-        contentView.addSubview(separatorView)
-        
-        NSLayoutConstraint.activate([
-            separatorView.heightAnchor.constraint(equalToConstant: 0.5),
-            separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
-        ])
-    }
-    
-    func setupSingleRow() {
-        self.layer.cornerRadius = 10
-        separatorView.isHidden = true
-    }
-    
-    func setupFirstRow(){
-        self.layer.cornerRadius = 10
-        self.clipsToBounds = true
-        self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        // Note: Kalau pakai contentView.layer.cornerRadius = 10, maka dibelakangnya masih ada view cell default yang mana corner radius-nya tidak ikut berubah
-    }
-    
-    func setupLastRow(){
-        self.layer.cornerRadius = 10
-        self.clipsToBounds = true
-        self.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        separatorView.isHidden = true
-    }
-}
-
 class TransactionFormTableView: UITableView {
     
     // MARK: - Variables
@@ -279,8 +221,8 @@ class TransactionFormTableView: UITableView {
     }
     
     // make public function untuk dipanggil dari controller, sekalian aja dibikin checker apakah textfield nya kosong atau ngga. terus nanti berarti return nya TransactionEntity aja, kalau form nya udah keisi semua
-    func getTransactionFormData() -> TransactionEntity {
-        return TransactionEntity(date: Date(), category: "", note: "", amount: 0, type: .expense)
+    func getTransactionFormData() -> Transaction {
+        return Transaction(date: Date(), category: "", note: "", amount: 0, type: .expense)
     }
 }
 

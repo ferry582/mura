@@ -12,7 +12,7 @@ enum TransactionType: String {
     case income = "Income"
 }
 
-struct TransactionEntity {
+struct Transaction {
 //    let id
     let date: Date
     let category: String
@@ -20,22 +20,22 @@ struct TransactionEntity {
     let amount: Double
     let type: TransactionType
     
-    static let transactionData1: [TransactionEntity] = [
-        TransactionEntity(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: 133000, type: .income),
-        TransactionEntity(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: -1000, type: .expense),
-        TransactionEntity(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: 1000, type: .income)
+    static let transactionData1: [Transaction] = [
+        Transaction(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: 133000, type: .income),
+        Transaction(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: -1000, type: .expense),
+        Transaction(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: 1000, type: .income)
     ]
     
-    static let transactionData2: [TransactionEntity] = [
-        TransactionEntity(date: Date(timeIntervalSince1970: 1696006800000), category: "Food", note: "makan malam", amount: 12000, type: .income),
-        TransactionEntity(date: Date(timeIntervalSince1970: 1696006800000), category: "Food", note: "makan malam", amount: -65000, type: .expense),
+    static let transactionData2: [Transaction] = [
+        Transaction(date: Date(timeIntervalSince1970: 1696006800000), category: "Food", note: "makan malam", amount: 12000, type: .income),
+        Transaction(date: Date(timeIntervalSince1970: 1696006800000), category: "Food", note: "makan malam", amount: -65000, type: .expense),
     ]
 }
 
 // Data model for tableView sections
 struct TransactionSection {
     let sectionTitle: String // data model: date, totalAmount
-    var transactions: [TransactionEntity]
+    var transactions: [Transaction]
 }
 
 struct Category {

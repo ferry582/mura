@@ -100,7 +100,7 @@ class TransactionCell: UITableViewCell {
         self.transactionIconImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
     }
     
-    func configure(with transaction: TransactionEntity) {
+    func configure(with transaction: Transaction) {
         self.categoryLabel.text = transaction.category
         self.amountLabel.text = String(transaction.amount)
         
