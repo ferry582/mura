@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class AddTransactionViewController: UIViewController {
     
@@ -56,10 +57,30 @@ class AddTransactionViewController: UIViewController {
     @objc func cancelTapped() {
         // Handle cancel action
         dismiss(animated: true, completion: nil)
+        
+        Task {
+            do {
+                let data = try await TransactionCoreDataSourceImpl().getAll()
+                print(data)
+            } catch {
+                print(error)
+            }
+        }
+        
     }
     
     @objc func doneTapped() {
-        // Handle done action
+//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
+        // test core data with clean architecture
+        let vm = AddTransactionViewModel()
+        let data: Transaction = Transaction(id: UUID(), date: Date(), category: .expense(.food), note: "listrik", amount: 123.4, type: TransactionType.income)
+        Task {
+            await vm.createTransaction(data: data)
+        }
+        
+        // tableview reload data
+        
         dismiss(animated: true, completion: nil)
     }
     

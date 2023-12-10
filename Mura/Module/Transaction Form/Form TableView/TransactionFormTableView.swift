@@ -27,9 +27,10 @@ class TransactionFormTableView: UITableView {
     // MARK: - Variables
     let formType: TransactionFormType
     var sections: [Section] = []
+    private var selectedType: TransactionType = .expense
     
-    let categories = ["Category 1", "Category 2", "Category 3"]
-    var selectedCategory: String?
+//    let categories = ["Category 1", "Category 2", "Category 3"]
+//    var selectedCategory: String?
     
     // MARK: UI Components
     private let typeSegmentedControl: UISegmentedControl = {
@@ -206,9 +207,11 @@ class TransactionFormTableView: UITableView {
     @objc private func typeSegmentedChanged() {
         switch typeSegmentedControl.selectedSegmentIndex {
         case 0:
+            self.selectedType = .expense
             self.categoryTextField.text = "None"
             // change categorypicker data source
         case 1:
+            self.selectedType = .income
             self.categoryTextField.text = "None"
         default:
             break
@@ -221,9 +224,17 @@ class TransactionFormTableView: UITableView {
     }
     
     // make public function untuk dipanggil dari controller, sekalian aja dibikin checker apakah textfield nya kosong atau ngga. terus nanti berarti return nya TransactionEntity aja, kalau form nya udah keisi semua
-    func getTransactionFormData() -> Transaction {
-        return Transaction(date: Date(), category: "", note: "", amount: 0, type: .expense)
+    func getFormData() -> Transaction {
+        if let category = categoryTextField.text, let amount = amountTextField.text {
+            
+        }
+        return Transaction(id: UUID(), date: Date(), category: .expense(.food), note: "", amount: 0, type: .expense)
     }
+    
+    func setFormData(transaction: Transaction) {
+        noteTextField.text = transaction.note
+    }
+    
 }
 
 extension TransactionFormTableView: UITextFieldDelegate {
@@ -252,18 +263,28 @@ extension TransactionFormTableView: UIPickerViewDelegate, UIPickerViewDataSource
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return categories.count
+        return if selectedType == .expense {
+            Category.ExpenseCategory.allCases.count
+        } else {
+            Category.IncomeCategory.allCases.count
+        }
     }
     
     // MARK: - UIPickerViewDelegate
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return categories[row]
+        return if selectedType == .expense {
+            Category.ExpenseCategory.allCases[row].getExpenseData().name
+        } else {
+            Category.IncomeCategory.allCases[row].getIncomeData().name
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        selectedCategory = categories[row]
-        categoryTextField.text = selectedCategory
-        //        categoryTextField.placeholder = selectedCategory
+        categoryTextField.text = if selectedType == .expense {
+            Category.ExpenseCategory.allCases[row].getExpenseData().name
+        } else {
+            Category.IncomeCategory.allCases[row].getIncomeData().name
+        }
     }
 }
 

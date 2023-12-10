@@ -13,9 +13,9 @@ class DashboardViewController: UIViewController {
     // MARK: - Variables
     private let reportViewModel: ReportViewModel
     private var transactionSections: [TransactionSection] = [
-        TransactionSection(sectionTitle: "01", transactions: Transaction.transactionData1),
-        TransactionSection(sectionTitle: "30", transactions: Transaction.transactionData2),
-        TransactionSection(sectionTitle: "29", transactions: Transaction.transactionData2),
+//        TransactionSection(sectionTitle: "01", transactions: Transaction.transactionData1),
+//        TransactionSection(sectionTitle: "30", transactions: Transaction.transactionData2),
+//        TransactionSection(sectionTitle: "29", transactions: Transaction.transactionData2),
     ]
     private var datePickerBottomConstraint: NSLayoutConstraint?
     

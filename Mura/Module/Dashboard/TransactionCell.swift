@@ -8,7 +8,7 @@
 import UIKit
 
 class TransactionCell: UITableViewCell {
-
+    
     // MARK: - Variables
     static let identifier = "TransactionCell"
     
@@ -90,7 +90,7 @@ class TransactionCell: UITableViewCell {
             amountLabel.centerYAnchor.constraint(equalTo: transactionIconImage.centerYAnchor),
             amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12)
         ])
-            
+        
     }
     
     func setupLastCell() {
@@ -101,7 +101,12 @@ class TransactionCell: UITableViewCell {
     }
     
     func configure(with transaction: Transaction) {
-        self.categoryLabel.text = transaction.category
+        self.categoryLabel.text = switch transaction.category {
+        case .income(let incomeCategory):
+            incomeCategory.rawValue
+        case .expense(let expenseCategory):
+            expenseCategory.rawValue
+        }
         self.amountLabel.text = String(transaction.amount)
         
         if transaction.amount < 0 {
@@ -118,5 +123,4 @@ class TransactionCell: UITableViewCell {
             self.transactionIconImage.setImageColor(color: UIColor.main)
         }
     }
-
 }

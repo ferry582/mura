@@ -12,24 +12,60 @@ enum TransactionType: String {
     case income = "Income"
 }
 
-struct Transaction {
-//    let id
+struct Transaction: Identifiable {
+    let id: UUID
     let date: Date
-    let category: String
+    let category: Category
     let note: String?
     let amount: Double
     let type: TransactionType
+}
+
+struct CategoryModel {
+    let name: String
+    let icon: String
+}
+
+enum Category {
+    case expense(ExpenseCategory)
+    case income(IncomeCategory)
     
-    static let transactionData1: [Transaction] = [
-        Transaction(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: 133000, type: .income),
-        Transaction(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: -1000, type: .expense),
-        Transaction(date: Date(timeIntervalSince1970: 1696175503450), category: "Food", note: "makan malam", amount: 1000, type: .income)
-    ]
+    enum ExpenseCategory: String, CaseIterable {
+        case food
+        case entertainment
+        
+        func getExpenseData() -> CategoryModel {
+            switch self {
+            case .food:
+                CategoryModel(name: "Food", icon: "food")
+            case .entertainment:
+                CategoryModel(name: "Entertainment", icon: "entertainment")
+            }
+        }
+    }
     
-    static let transactionData2: [Transaction] = [
-        Transaction(date: Date(timeIntervalSince1970: 1696006800000), category: "Food", note: "makan malam", amount: 12000, type: .income),
-        Transaction(date: Date(timeIntervalSince1970: 1696006800000), category: "Food", note: "makan malam", amount: -65000, type: .expense),
-    ]
+    enum IncomeCategory: String, CaseIterable {
+        case salary
+        case gift
+        
+        func getIncomeData() -> CategoryModel {
+            switch self {
+            case .salary:
+                CategoryModel(name: "Salary", icon: "salary")
+            case .gift:
+                CategoryModel(name: "Gift", icon: "gift")
+            }
+        }
+    }
+    
+    static func categoryFromString(_ string: String) -> Category? {
+        if let expenseCategory = ExpenseCategory(rawValue: string) {
+            return .expense(expenseCategory)
+        } else if let incomeCategory = IncomeCategory(rawValue: string) {
+            return .income(incomeCategory)
+        }
+        return nil
+    }
 }
 
 // Data model for tableView sections
@@ -37,26 +73,3 @@ struct TransactionSection {
     let sectionTitle: String // data model: date, totalAmount
     var transactions: [Transaction]
 }
-
-struct Category {
-    let name: String
-    let icon: String
-}
-
-enum ExpenseCategory {
-    case food
-    case entertainment
-    
-    func getExpenseCategory() -> Category {
-        switch self {
-        case .food:
-            Category(name: "Food", icon: "food")
-        case .entertainment:
-            Category(name: "Entertainment", icon: "entertainment")
-        }
-    }
-    
-}
-
-var food: ExpenseCategory = .food
-var foodName = food.getExpenseCategory().name
