@@ -28,9 +28,7 @@ class TransactionFormTableView: UITableView {
     let formType: TransactionFormType
     var sections: [Section] = []
     private var selectedType: TransactionType = .expense
-    
-//    let categories = ["Category 1", "Category 2", "Category 3"]
-//    var selectedCategory: String?
+    private var selectedCategory: Category = .emptyCategory
     
     // MARK: UI Components
     private let typeSegmentedControl: UISegmentedControl = {
@@ -89,7 +87,7 @@ class TransactionFormTableView: UITableView {
         container.addSubview(imageView)
         textfield.rightView = container
         textfield.delegate = self
-        textfield.text = "None"
+        textfield.text = Category.emptyCategory.name
         textfield.textAlignment = .right
         textfield.inputView = categoryPickerView
         textfield.inputAccessoryView = toolbar
@@ -119,7 +117,6 @@ class TransactionFormTableView: UITableView {
         self.dataSource = self
         
         self.buildSections()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -137,7 +134,6 @@ class TransactionFormTableView: UITableView {
             typeSegmentedControl.trailingAnchor.constraint(equalTo: typeCell.contentView.trailingAnchor, constant: -16)
         ])
         
-        
         // Build Transaction Amount Cell
         let amountCell = TransactionFormCell(style: .value1, reuseIdentifier: nil)
         amountCell.textLabel?.text = "Amount"
@@ -150,7 +146,6 @@ class TransactionFormTableView: UITableView {
         amountCell.didSelect = { [weak self] in
             self?.amountTextField.becomeFirstResponder()
         }
-        
         
         // Build Transaction Category Cell
         let categoryCell = TransactionFormCell(style: .value1, reuseIdentifier: nil)
@@ -173,7 +168,6 @@ class TransactionFormTableView: UITableView {
             datePicker.centerYAnchor.constraint(equalTo: dateCell.contentView.centerYAnchor),
             datePicker.trailingAnchor.constraint(equalTo: dateCell.contentView.trailingAnchor, constant: -16)
         ])
-        
         
         // Build Transaction Note Cell
         let noteCell = TransactionFormCell(style: .value1, reuseIdentifier: nil)
@@ -200,7 +194,7 @@ class TransactionFormTableView: UITableView {
         self.endEditing(true) // Handle keyboard dismissal when the user taps outside the UITextField
     }
     
-    @objc func doneButtonTapped() {
+    @objc private func doneButtonTapped() {
         categoryTextField.resignFirstResponder()
     }
     
@@ -208,27 +202,23 @@ class TransactionFormTableView: UITableView {
         switch typeSegmentedControl.selectedSegmentIndex {
         case 0:
             self.selectedType = .expense
-            self.categoryTextField.text = "None"
+            self.categoryTextField.text = Category.emptyCategory.name
             // change categorypicker data source
         case 1:
             self.selectedType = .income
-            self.categoryTextField.text = "None"
+            self.categoryTextField.text = Category.emptyCategory.name
         default:
             break
         }
     }
     
-    @objc func dateChanged(_ datePicker: UIDatePicker) {
-        //        selectedDate = datePicker.date
+    @objc private func dateChanged(_ datePicker: UIDatePicker) {
         print(datePicker.date)
     }
     
-    // make public function untuk dipanggil dari controller, sekalian aja dibikin checker apakah textfield nya kosong atau ngga. terus nanti berarti return nya TransactionEntity aja, kalau form nya udah keisi semua
+    // MARK: Getter & Setter Methods
     func getFormData() -> Transaction {
-        if let category = categoryTextField.text, let amount = amountTextField.text {
-            
-        }
-        return Transaction(id: UUID(), date: Date(), category: .expense(.food), note: "", amount: 0, type: .expense)
+        return Transaction(id: UUID(), date: datePicker.date, category: selectedCategory, note: noteTextField.text, amount: Double(amountTextField.text ?? "") ?? 0, type: selectedType)
     }
     
     func setFormData(transaction: Transaction) {
@@ -239,12 +229,11 @@ class TransactionFormTableView: UITableView {
 
 extension TransactionFormTableView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let allowedCharacters = CharacterSet(charactersIn: "0123456789.,")
+        let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
         let characterSet = CharacterSet(charactersIn: string)
         // Check if the entered characters are valid (numbers and at most one decimal point)
         let isOnlyNumber = allowedCharacters.isSuperset(of: characterSet) &&
-        (string.range(of: ".") == nil || textField.text?.contains(".") == false) &&
-        (string.range(of: ",") == nil || textField.text?.contains(",") == false)
+        (string.range(of: ".") == nil || textField.text?.contains(".") == false)
         
         return if textField == categoryTextField {
             false // Disable direct text input by returning false
@@ -263,27 +252,21 @@ extension TransactionFormTableView: UIPickerViewDelegate, UIPickerViewDataSource
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return if selectedType == .expense {
-            Category.ExpenseCategory.allCases.count
-        } else {
-            Category.IncomeCategory.allCases.count
-        }
+        return selectedType == .expense ? Category.expenseCategories.count : Category.incomeCategories.count
     }
     
     // MARK: - UIPickerViewDelegate
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return if selectedType == .expense {
-            Category.ExpenseCategory.allCases[row].getExpenseData().name
-        } else {
-            Category.IncomeCategory.allCases[row].getIncomeData().name
-        }
+        return selectedType == .expense ? Category.expenseCategories[row].name : Category.incomeCategories[row].name
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        categoryTextField.text = if selectedType == .expense {
-            Category.ExpenseCategory.allCases[row].getExpenseData().name
+        if selectedType == .expense {
+            categoryTextField.text = Category.expenseCategories[row].name
+            selectedCategory = .expenseCategories[row]
         } else {
-            Category.IncomeCategory.allCases[row].getIncomeData().name
+            categoryTextField.text = Category.incomeCategories[row].name
+            selectedCategory = .incomeCategories[row]
         }
     }
 }
@@ -324,5 +307,4 @@ extension TransactionFormTableView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-    
 }

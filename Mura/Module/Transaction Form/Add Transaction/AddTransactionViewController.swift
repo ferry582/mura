@@ -6,14 +6,25 @@
 //
 
 import UIKit
-import CoreData
+import RxSwift
 
 class AddTransactionViewController: UIViewController {
     
     // MARK: - Variables
+    private let viewModel: AddTransactionViewModel
+    private let disposeBag = DisposeBag()
+    
+    init(viewModel: AddTransactionViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - UI Components
-    private let transactionFormView: UITableView = {
+    private let transactionFormView: TransactionFormTableView = {
         let table = TransactionFormTableView(formType: .add)
         table.backgroundColor = .none
         table.translatesAutoresizingMaskIntoConstraints = false
@@ -26,6 +37,38 @@ class AddTransactionViewController: UIViewController {
         
         setupNavBar()
         setupView()
+        
+        viewModel.isTransactionCreated
+            .subscribe (onNext: { [weak self] isCreated in
+                if isCreated {
+                    DispatchQueue.main.async {
+                        self?.dismiss(animated: true, completion: nil)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.error
+            .subscribe(onNext: { error in
+                if let error = error {
+                    if error is ValidationError {
+                        print((error as! ValidationError).message)
+                    } else {
+                        print(error.localizedDescription)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .subscribe(onNext: { [weak self] isLoading in
+                if isLoading {
+                    print("loading...")
+                } else {
+                    print("stop loading")
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - UI Setup
@@ -55,33 +98,13 @@ class AddTransactionViewController: UIViewController {
     
     // MARK: - Setup Action
     @objc func cancelTapped() {
-        // Handle cancel action
         dismiss(animated: true, completion: nil)
-        
-        Task {
-            do {
-                let data = try await TransactionCoreDataSourceImpl().getAll()
-                print(data)
-            } catch {
-                print(error)
-            }
-        }
-        
     }
     
     @objc func doneTapped() {
-//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        
-        // test core data with clean architecture
-        let vm = AddTransactionViewModel()
-        let data: Transaction = Transaction(id: UUID(), date: Date(), category: .expense(.food), note: "listrik", amount: 123.4, type: TransactionType.income)
         Task {
-            await vm.createTransaction(data: data)
+            let transaction = transactionFormView.getFormData()
+            await viewModel.createTransaction(data: transaction)
         }
-        
-        // tableview reload data
-        
-        dismiss(animated: true, completion: nil)
     }
-    
 }

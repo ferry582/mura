@@ -142,14 +142,12 @@ class DashboardViewController: UIViewController {
     
     // MARK: - Setup Action
     @objc private func addTapped() {
-        
-        let vc = AddTransactionViewController()
+        let vc = AddTransactionViewController(viewModel: AddTransactionViewModel())
         let navigationController = UINavigationController(rootViewController: vc)
         if let sheet = navigationController.sheetPresentationController {
             sheet.detents = [.large()]
         }
         present(navigationController, animated: true)
-        
     }
     
     @objc func doneButtonTapped() {
@@ -183,7 +181,7 @@ class DashboardViewController: UIViewController {
 }
 
 extension DashboardViewController: UITableViewDelegate, UITableViewDataSource {
-    
+
     // MARK: SECTION HEADER CELL
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.transactionSections.count

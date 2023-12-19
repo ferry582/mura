@@ -101,12 +101,7 @@ class TransactionCell: UITableViewCell {
     }
     
     func configure(with transaction: Transaction) {
-        self.categoryLabel.text = switch transaction.category {
-        case .income(let incomeCategory):
-            incomeCategory.rawValue
-        case .expense(let expenseCategory):
-            expenseCategory.rawValue
-        }
+        self.categoryLabel.text = transaction.category.name
         self.amountLabel.text = String(transaction.amount)
         
         if transaction.amount < 0 {

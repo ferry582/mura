@@ -3,6 +3,12 @@ packages:
   MonthYearWheelPicker:
     url: https://github.com/bendodson/MonthYearWheelPicker
     from: 1.0.1
+  RxSwift:
+    url: https://github.com/ReactiveX/RxSwift
+    from: 6.6.0
+  RxCocoa:
+    url: https://github.com/ReactiveX/RxSwift
+    from: 6.6.0
 configs:
   Mura-DEV: debug
   Mura: release
@@ -43,6 +49,8 @@ targets:
           DEVELOPMENT_TEAM: G3AYHKZCLN
     dependencies:
       - package: MonthYearWheelPicker
+      - package: RxSwift
+      - package: RxCocoa
 schemes:
   Mura:
     build:
