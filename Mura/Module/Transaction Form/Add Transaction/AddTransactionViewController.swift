@@ -8,11 +8,16 @@
 import UIKit
 import RxSwift
 
+protocol AddTransactionViewControllerDelegate: AnyObject {
+    func didTransactionCreated()
+}
+
 class AddTransactionViewController: UIViewController {
     
     // MARK: - Variables
     private let viewModel: AddTransactionViewModel
     private let disposeBag = DisposeBag()
+    weak var delegate: AddTransactionViewControllerDelegate?
     
     init(viewModel: AddTransactionViewModel) {
         self.viewModel = viewModel
@@ -38,37 +43,7 @@ class AddTransactionViewController: UIViewController {
         setupNavBar()
         setupView()
         
-        viewModel.isTransactionCreated
-            .subscribe (onNext: { [weak self] isCreated in
-                if isCreated {
-                    DispatchQueue.main.async {
-                        self?.dismiss(animated: true, completion: nil)
-                    }
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.error
-            .subscribe(onNext: { error in
-                if let error = error {
-                    if error is ValidationError {
-                        print((error as! ValidationError).message)
-                    } else {
-                        print(error.localizedDescription)
-                    }
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.isLoading
-            .subscribe(onNext: { [weak self] isLoading in
-                if isLoading {
-                    print("loading...")
-                } else {
-                    print("stop loading")
-                }
-            })
-            .disposed(by: disposeBag)
+        observeDataChanges()
     }
     
     // MARK: - UI Setup
@@ -102,9 +77,45 @@ class AddTransactionViewController: UIViewController {
     }
     
     @objc func doneTapped() {
+//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         Task {
-            let transaction = transactionFormView.getFormData()
-            await viewModel.createTransaction(data: transaction)
+            var transaction = transactionFormView.getFormData()
+            await viewModel.createTransaction(data: &transaction)
         }
+    }
+    
+    // MARK: - Observers
+    func observeDataChanges() {
+        viewModel.transactionCreated
+            .observe(on: MainScheduler.instance)
+            .subscribe (onNext: { [weak self] isCreated in
+                self?.dismiss(animated: true, completion: nil)
+                self?.delegate?.didTransactionCreated()
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.error
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { error in
+                if let error = error {
+                    if error is ValidationError {
+                        print((error as! ValidationError).message)
+                    } else {
+                        print(error.localizedDescription)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLoading in
+                if isLoading {
+                    print("loading...")
+                } else {
+                    print("stop loading")
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }

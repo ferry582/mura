@@ -7,23 +7,19 @@
 
 import Foundation
 
-enum TransactionError: Error{
- case DataSourceError, CreateError, DeleteError, UpdateError, FetchError
-}
-
 protocol AddTransactionUseCase {
-    func createTransaction(_ transaction: Transaction) async -> Result<Bool, TransactionError>
+    func createTransaction(_ transaction: Transaction) async -> Result<Void, Error>
 }
 
 struct AddTransactionUseCaseImpl: AddTransactionUseCase {
     let repository: TransactionRepository
     
-    func createTransaction(_ transaction: Transaction) async -> Result<Bool, TransactionError> {
+    func createTransaction(_ transaction: Transaction) async -> Result<Void, Error> {
         do {
             try await repository.createTransaction(transaction)
-            return .success(true)
+            return .success(())
         } catch {
-            return .failure(.CreateError)
+            return .failure(error)
         }
     }
     

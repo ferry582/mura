@@ -110,8 +110,11 @@ class TransactionSectionHeader: UITableViewHeaderFooterView {
             
     }
     
-    public func configure(with title: String) {
-        self.dayLabel.text = title
+    public func configure(date: Date, totalAmount: Double) {
+        self.dayLabel.text = date.convertToDayString()
+        self.monthYearLabel.text = date.convertToMonthYearString()
+        self.dayNameLabel.text = date.convertToDayNameString()
+        self.totalAmountLabel.text = "100"
         self.setupView()
     }
 

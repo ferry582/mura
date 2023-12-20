@@ -7,17 +7,16 @@
 
 import UIKit
 import MonthYearWheelPicker
+import RxSwift
 
-class DashboardViewController: UIViewController {
+class DashboardViewController: UIViewController, AddTransactionViewControllerDelegate {
     
     // MARK: - Variables
+    private let viewModel: DashboardViewModel
     private let reportViewModel: ReportViewModel
-    private var transactionSections: [TransactionSection] = [
-//        TransactionSection(sectionTitle: "01", transactions: Transaction.transactionData1),
-//        TransactionSection(sectionTitle: "30", transactions: Transaction.transactionData2),
-//        TransactionSection(sectionTitle: "29", transactions: Transaction.transactionData2),
-    ]
+    private let disposeBag = DisposeBag()
     private var datePickerBottomConstraint: NSLayoutConstraint?
+    private var transactionSections: [TransactionSection] = []
     
     // MARK: - UI Components
     private let dashboardTableView: UITableView = {
@@ -69,10 +68,10 @@ class DashboardViewController: UIViewController {
     }()
     
     // MARK: Life Cycle
-    init(_ reportViewModel: ReportViewModel = ReportViewModel()) {
+    init(viewModel: DashboardViewModel, reportViewModel: ReportViewModel = ReportViewModel()) {
+        self.viewModel = viewModel
         self.reportViewModel = reportViewModel
         super.init(nibName: nil, bundle: nil)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -93,7 +92,52 @@ class DashboardViewController: UIViewController {
             self.animateDatePicker(to: 0)
         }
         
+        Task {
+            await viewModel.getTransactions()
+        }
+        
+        observeDataChanges()
+        
         dashboardTableViewHeader.balancePercentText = reportViewModel.getBalancePercentText()
+    }
+    
+    // MARK: - Observer
+    private func observeDataChanges() {
+        viewModel.transactionSections
+            .observe(on: MainScheduler.instance)
+            .subscribe (onNext: { [weak self] transactionSections in
+                if transactionSections.isEmpty {
+                    print("There is no transactions yet")
+                } else {
+                    self?.transactionSections = transactionSections
+                    self?.dashboardTableView.reloadData()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.error
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { error in
+                if let error = error {
+                    if error is ValidationError {
+                        print((error as! ValidationError).message)
+                    } else {
+                        print(error.localizedDescription)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLoading in
+                if isLoading {
+                    print("loading...")
+                } else {
+                    print("stop loading")
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - UI Setup
@@ -143,6 +187,7 @@ class DashboardViewController: UIViewController {
     // MARK: - Setup Action
     @objc private func addTapped() {
         let vc = AddTransactionViewController(viewModel: AddTransactionViewModel())
+        vc.delegate = self
         let navigationController = UINavigationController(rootViewController: vc)
         if let sheet = navigationController.sheetPresentationController {
             sheet.detents = [.large()]
@@ -178,6 +223,12 @@ class DashboardViewController: UIViewController {
         animateDatePicker(to: 0)
     }
     
+    func didTransactionCreated() {
+        Task {
+            await viewModel.getTransactions()
+            dashboardTableView.reloadData()
+        }
+    }
 }
 
 extension DashboardViewController: UITableViewDelegate, UITableViewDataSource {
@@ -191,8 +242,9 @@ extension DashboardViewController: UITableViewDelegate, UITableViewDataSource {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: TransactionSectionHeader.identifier) as? TransactionSectionHeader else {
             fatalError("Failed to create transaction header cell")
         }
-        let headerTitle = self.transactionSections[section].sectionTitle
-        header.configure(with: headerTitle)
+        let date = self.transactionSections[section].date
+        let totalAmount = self.transactionSections[section].totalAmount
+        header.configure(date: date, totalAmount: totalAmount)
         return header
     }
     

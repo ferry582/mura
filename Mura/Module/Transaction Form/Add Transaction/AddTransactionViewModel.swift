@@ -12,13 +12,12 @@ import RxCocoa
 class AddTransactionViewModel {
     
     private let useCase = TransactionInjection().getAddTransactionUseCase()
-    private let disposeBag = DisposeBag()
-    private let isTransactionCreatedSubject = BehaviorSubject<Bool>(value: false)
+    private let transactionCreatedSubject = PublishSubject<Void>()
     private let errorSubject = BehaviorSubject<Error?>(value: nil)
     private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
     
-    var isTransactionCreated: Observable<Bool> {
-        return isTransactionCreatedSubject.asObserver()
+    var transactionCreated: Observable<Void> {
+        return transactionCreatedSubject.asObserver()
     }
     var error: Observable<Error?> {
         return errorSubject.asObserver()
@@ -27,7 +26,7 @@ class AddTransactionViewModel {
         return isLoadingRelay.asObservable()
     }
     
-    func createTransaction(data: Transaction) async {
+    func createTransaction(data: inout Transaction) async {
         isLoadingRelay.accept(true)
         
         do {
@@ -35,10 +34,12 @@ class AddTransactionViewModel {
             try ValidatorFactory.validatorFor(type: .category).validated(data.category.name)
             try ValidatorFactory.validatorFor(type: .requiredField(field: "Amount")).validated(data.amount)
             
+            data.amount = data.type == .expense ? (data.amount * -1) : data.amount
+            
             let result = await useCase.createTransaction(data)
             switch result {
-            case .success(_):
-                isTransactionCreatedSubject.onNext(true)
+            case .success:
+                transactionCreatedSubject.onNext(())
             case .failure(let error):
                 errorSubject.onNext(error)
             }

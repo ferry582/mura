@@ -14,13 +14,9 @@ struct TransactionRepositoryImpl: TransactionRepository {
         return TransactionRepositoryImpl(dataSource: dataSource)
     }
     
-    func getTransactions() async -> Result<[Transaction], TransactionError> {
-        do{
-            let _transactions =  try await dataSource.getAll()
-            return .success(_transactions)
-        }catch{
-            return .failure(.FetchError)
-        }
+    func getTransactions() async throws -> [Transaction] {
+        let transactions = try await dataSource.getAll()
+        return transactions
     }
     
     func createTransaction(_ transaction: Transaction) async throws {

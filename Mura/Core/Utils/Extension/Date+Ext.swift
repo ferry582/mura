@@ -14,4 +14,18 @@ extension Date {
         dateFormatter.locale = Locale(identifier: Locale.current.identifier)
         return dateFormatter.string(from: self)
     }
+    
+    func convertToDayString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd"
+        dateFormatter.locale = Locale(identifier: Locale.current.identifier)
+        return dateFormatter.string(from: self)
+    }
+    
+    func convertToDayNameString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        dateFormatter.locale = Locale(identifier: Locale.current.identifier)
+        return dateFormatter.string(from: self)
+    }
 }

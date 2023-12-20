@@ -17,4 +17,9 @@ class TransactionInjection {
         let repo = getRepo()
         return AddTransactionUseCaseImpl(repository: repo)
     }
+    
+    func getDashboardUseCase() -> DashboardUseCase {
+        let repo = getRepo()
+        return DashboardUseCaseImpl(repository: repo)
+    }
 }

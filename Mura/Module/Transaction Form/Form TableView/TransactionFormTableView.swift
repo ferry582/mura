@@ -218,7 +218,13 @@ class TransactionFormTableView: UITableView {
     
     // MARK: Getter & Setter Methods
     func getFormData() -> Transaction {
-        return Transaction(id: UUID(), date: datePicker.date, category: selectedCategory, note: noteTextField.text, amount: Double(amountTextField.text ?? "") ?? 0, type: selectedType)
+        return Transaction(
+            id: UUID(),
+            date: datePicker.date,
+            category: selectedCategory,
+            note: noteTextField.text,
+            amount: Double(amountTextField.text ?? "0") ?? 0,
+            type: selectedType)
     }
     
     func setFormData(transaction: Transaction) {
@@ -232,13 +238,13 @@ extension TransactionFormTableView: UITextFieldDelegate {
         let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
         let characterSet = CharacterSet(charactersIn: string)
         // Check if the entered characters are valid (numbers and at most one decimal point)
-        let isOnlyNumber = allowedCharacters.isSuperset(of: characterSet) &&
+        let isOnlyNumberAndDot = allowedCharacters.isSuperset(of: characterSet) &&
         (string.range(of: ".") == nil || textField.text?.contains(".") == false)
         
         return if textField == categoryTextField {
             false // Disable direct text input by returning false
         } else if textField == amountTextField {
-            isOnlyNumber // Only allow numeric value for amount textfield
+            isOnlyNumberAndDot
         } else {
             true
         }

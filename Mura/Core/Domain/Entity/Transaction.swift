@@ -17,12 +17,6 @@ struct Transaction: Identifiable {
     let date: Date
     let category: Category
     let note: String?
-    let amount: Double
+    var amount: Double
     let type: TransactionType
-}
-
-// Data model for tableView sections
-struct TransactionSection {
-    let sectionTitle: String // data model: date, totalAmount
-    var transactions: [Transaction]
 }

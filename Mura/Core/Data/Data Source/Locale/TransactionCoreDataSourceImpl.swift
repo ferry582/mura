@@ -33,7 +33,7 @@ struct TransactionCoreDataSourceImpl: TransactionDataSource {
                 note: transactionEntity.note,
                 amount: transactionEntity.amount,
                 type: type
-                )
+            )
         }
     }
     
