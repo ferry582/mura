@@ -105,16 +105,14 @@ class TransactionSectionHeader: UITableViewHeaderFooterView {
             
             totalAmountLabel.centerYAnchor.constraint(equalTo: bgView.centerYAnchor),
             totalAmountLabel.trailingAnchor.constraint(equalTo: bgView.trailingAnchor, constant: -12)
-            
         ])
-            
     }
     
     public func configure(date: Date, totalAmount: Double) {
         self.dayLabel.text = date.convertToDayString()
         self.monthYearLabel.text = date.convertToMonthYearString()
         self.dayNameLabel.text = date.convertToDayNameString()
-        self.totalAmountLabel.text = "100"
+        self.totalAmountLabel.text = totalAmount.formatToLocalizedDecimal()
         self.setupView()
     }
 

@@ -102,7 +102,7 @@ class TransactionCell: UITableViewCell {
     
     func configure(with transaction: Transaction) {
         self.categoryLabel.text = transaction.category.name
-        self.amountLabel.text = String(transaction.amount)
+        self.amountLabel.text = transaction.amount.formatToLocalizedDecimal()
         
         if transaction.amount < 0 {
             amountLabel.textColor = UIColor.negativeAmount

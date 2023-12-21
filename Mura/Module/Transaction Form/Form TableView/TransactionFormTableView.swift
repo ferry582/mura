@@ -70,8 +70,9 @@ class TransactionFormTableView: UITableView {
     
     private lazy var amountTextField: UITextField = {
         let textfield = UITextField()
+        let decimalSeparator = NSLocale.current.decimalSeparator!
         textfield.delegate = self
-        textfield.placeholder = "0.00"
+        textfield.placeholder = "0\(decimalSeparator)00"
         textfield.textAlignment = .right
         textfield.keyboardType = .decimalPad
         textfield.textColor = .lightGray
@@ -203,10 +204,11 @@ class TransactionFormTableView: UITableView {
         case 0:
             self.selectedType = .expense
             self.categoryTextField.text = Category.emptyCategory.name
-            // change categorypicker data source
+            self.selectedCategory = Category.emptyCategory
         case 1:
             self.selectedType = .income
             self.categoryTextField.text = Category.emptyCategory.name
+            self.selectedCategory = Category.emptyCategory
         default:
             break
         }
@@ -223,7 +225,7 @@ class TransactionFormTableView: UITableView {
             date: datePicker.date,
             category: selectedCategory,
             note: noteTextField.text,
-            amount: Double(amountTextField.text ?? "0") ?? 0,
+            amount: convertedAmount(amountText: amountTextField.text!),
             type: selectedType)
     }
     
@@ -231,22 +233,48 @@ class TransactionFormTableView: UITableView {
         noteTextField.text = transaction.note
     }
     
+    func convertedAmount(amountText: String) -> Double {
+        let dotSeparator = "."
+        let decimalSeparator = NSLocale.current.decimalSeparator ?? dotSeparator
+        let checkedAmount = if decimalSeparator != dotSeparator {
+            amountText.replacingOccurrences(of: decimalSeparator, with: dotSeparator)
+        } else {
+            amountText
+        }
+        return Double(checkedAmount) ?? 0
+    }
+    
 }
 
 extension TransactionFormTableView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
-        let characterSet = CharacterSet(charactersIn: string)
-        // Check if the entered characters are valid (numbers and at most one decimal point)
-        let isOnlyNumberAndDot = allowedCharacters.isSuperset(of: characterSet) &&
-        (string.range(of: ".") == nil || textField.text?.contains(".") == false)
-        
-        return if textField == categoryTextField {
-            false // Disable direct text input by returning false
-        } else if textField == amountTextField {
-            isOnlyNumberAndDot
+        if textField == amountTextField {
+            guard let text = textField.text, let decimalSeparator = NSLocale.current.decimalSeparator else {
+                return true
+            }
+            
+            var splitText = text.components(separatedBy: decimalSeparator)
+            let totalDecimalSeparators = splitText.count - 1
+            let isEditingEnd = (text.count - 3) < range.lowerBound
+            
+            splitText.removeFirst()
+            
+            // Check if exceed 2 decimal point
+            if splitText.last?.count ?? 0 > 1 && string.count != 0 && isEditingEnd {
+                return false
+            }
+            
+            // Allow only single dot
+            if totalDecimalSeparators > 0 && string == decimalSeparator {
+                return false
+            }
+            
+            // Only allow numbers and decimal separator
+            let allowedCharacters = CharacterSet(charactersIn: "0123456789\(decimalSeparator)")
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
         } else {
-            true
+            return true
         }
     }
 }

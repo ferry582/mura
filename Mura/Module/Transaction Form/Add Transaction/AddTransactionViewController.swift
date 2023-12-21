@@ -111,9 +111,9 @@ class AddTransactionViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isLoading in
                 if isLoading {
-                    print("loading...")
+//                    print("loading...")
                 } else {
-                    print("stop loading")
+//                    print("stop loading")
                 }
             })
             .disposed(by: disposeBag)
