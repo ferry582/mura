@@ -205,10 +205,14 @@ class TransactionFormTableView: UITableView {
             self.selectedType = .expense
             self.categoryTextField.text = Category.emptyCategory.name
             self.selectedCategory = Category.emptyCategory
+            categoryTextField.resignFirstResponder()
+            categoryPickerView.selectRow(0, inComponent: 0, animated: true)
         case 1:
             self.selectedType = .income
             self.categoryTextField.text = Category.emptyCategory.name
             self.selectedCategory = Category.emptyCategory
+            categoryTextField.resignFirstResponder()
+            categoryPickerView.selectRow(0, inComponent: 0, animated: true)
         default:
             break
         }
