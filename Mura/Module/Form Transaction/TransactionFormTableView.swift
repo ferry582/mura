@@ -219,7 +219,7 @@ class TransactionFormTableView: UITableView {
     }
     
     @objc private func dateChanged(_ datePicker: UIDatePicker) {
-        print(datePicker.date)
+        
     }
     
     // MARK: Getter & Setter Methods
@@ -229,7 +229,7 @@ class TransactionFormTableView: UITableView {
             date: datePicker.date,
             category: selectedCategory,
             note: noteTextField.text,
-            amount: convertedAmount(amountText: amountTextField.text!),
+            amount: convertToDecimalSeparator(amountText: amountTextField.text!),
             type: selectedType)
     }
     
@@ -237,7 +237,7 @@ class TransactionFormTableView: UITableView {
         noteTextField.text = transaction.note
     }
     
-    func convertedAmount(amountText: String) -> Double {
+    func convertToDecimalSeparator(amountText: String) -> Double {
         let dotSeparator = "."
         let decimalSeparator = NSLocale.current.decimalSeparator ?? dotSeparator
         let checkedAmount = if decimalSeparator != dotSeparator {
@@ -277,6 +277,8 @@ extension TransactionFormTableView: UITextFieldDelegate {
             let allowedCharacters = CharacterSet(charactersIn: "0123456789\(decimalSeparator)")
             let characterSet = CharacterSet(charactersIn: string)
             return allowedCharacters.isSuperset(of: characterSet)
+        } else if textField == categoryTextField {
+            return false
         } else {
             return true
         }

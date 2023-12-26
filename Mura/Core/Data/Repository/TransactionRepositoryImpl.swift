@@ -14,8 +14,8 @@ struct TransactionRepositoryImpl: TransactionRepository {
         return TransactionRepositoryImpl(dataSource: dataSource)
     }
     
-    func getTransactions() async throws -> [Transaction] {
-        let transactions = try await dataSource.getAll()
+    func getTransactions(startDate: Date, endDate: Date) async throws -> [Transaction] {
+        let transactions = try await dataSource.getAll(startDate: startDate, endDate: endDate)
         return transactions
     }
     

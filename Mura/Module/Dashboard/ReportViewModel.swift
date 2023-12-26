@@ -8,6 +8,7 @@
 import UIKit
 
 class ReportViewModel {
+    
     func getBalancePercentText() -> NSMutableAttributedString {
         let text = NSMutableAttributedString()
         text.append(NSAttributedString(string: "30% ", attributes: [

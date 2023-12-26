@@ -16,7 +16,12 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
     private let reportViewModel: ReportViewModel
     private let disposeBag = DisposeBag()
     private var datePickerBottomConstraint: NSLayoutConstraint?
-    private var transactionSections: [TransactionSection] = []
+    private var transactionSections: [TransactionSection] = [] {
+        didSet {
+            dashboardTableView.reloadData()
+        }
+    }
+    private var selectedMonthYear = Date()
     
     // MARK: - UI Components
     private let dashboardTableView: UITableView = {
@@ -45,7 +50,7 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         picker.isHidden = true
         dateComponents.year = 2015
         dateComponents.month = 1
-        picker.minimumDate = userCalendar.date(from: dateComponents)! // Value of minDate should be the oldest transaction on db
+        picker.minimumDate = userCalendar.date(from: dateComponents)!
         dateComponents.year = 1
         picker.maximumDate = Calendar.current.date(byAdding: dateComponents, to: Date())!
         picker.translatesAutoresizingMaskIntoConstraints = false
@@ -86,6 +91,8 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         self.dashboardTableView.delegate = self
         self.dashboardTableView.dataSource = self
         
+        self.selectedMonthYear = monthYearDatePicker.date
+        
         dashboardTableViewHeader.didTapDateButton = {
             self.monthYearDatePicker.isHidden = false
             self.toolbar.isHidden = false
@@ -93,7 +100,7 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         }
         
         Task {
-            await viewModel.getTransactions()
+            await viewModel.getTransactions(in: selectedMonthYear)
         }
         
         observeDataChanges()
@@ -106,12 +113,7 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         viewModel.transactionSections
             .observe(on: MainScheduler.instance)
             .subscribe (onNext: { [weak self] transactionSections in
-                if transactionSections.isEmpty {
-                    print("There is no transactions yet")
-                } else {
-                    self?.transactionSections = transactionSections
-                    self?.dashboardTableView.reloadData()
-                }
+                self?.transactionSections = transactionSections
             })
             .disposed(by: disposeBag)
         
@@ -195,15 +197,22 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         present(navigationController, animated: true)
     }
     
-    @objc func doneButtonTapped() {
-        dashboardTableViewHeader.monthYearText = monthYearDatePicker.date.convertToMonthYearString()
+    @objc private func doneButtonTapped() {
+        selectedMonthYear = monthYearDatePicker.date
+        dashboardTableViewHeader.monthYearText = selectedMonthYear.convertToMonthYearString()
+        
+        Task {
+            await viewModel.getTransactions(in: selectedMonthYear)
+        }
+        
         animateDatePicker(to: self.monthYearDatePicker.frame.height) { _ in
             self.monthYearDatePicker.isHidden = true
             self.toolbar.isHidden = true
         }
     }
     
-    @objc func cancelButtonTapped() {
+    @objc private func cancelButtonTapped() {
+        monthYearDatePicker.date = selectedMonthYear
         animateDatePicker(to: self.monthYearDatePicker.frame.height) { _ in
             self.monthYearDatePicker.isHidden = true
             self.toolbar.isHidden = true
@@ -217,6 +226,7 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         }, completion: completion)
     }
     
+    // MARK: - Callback Methods
     func didTapDateButton(){
         monthYearDatePicker.isHidden = false
         toolbar.isHidden = false
@@ -225,8 +235,7 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
     
     func didTransactionCreated() {
         Task {
-            await viewModel.getTransactions()
-            dashboardTableView.reloadData()
+            await viewModel.getTransactions(in: selectedMonthYear)
         }
     }
 }

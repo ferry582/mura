@@ -32,10 +32,14 @@ class DashboardViewModel {
         return isLoadingRelay.asObservable()
     }
     
-    func getTransactions() async {
+    func getTransactions(in selectedMonthYear: Date) async {
         isLoadingRelay.accept(true)
         
-        let result = await useCase.getTransactions()
+        let calendar = Calendar.current
+        let firstDay = calendar.dateInterval(of: .month, for: selectedMonthYear)?.start
+        let lastDay = calendar.dateInterval(of: .month, for: selectedMonthYear)?.end
+        
+        let result = await useCase.getTransactions(startDate: firstDay!, endDate: lastDay!)
         switch result {
         case .success(let transactions):
             mapToTransactionSections(transactions: transactions)
@@ -46,7 +50,7 @@ class DashboardViewModel {
         isLoadingRelay.accept(false)
     }
     
-    func mapToTransactionSections(transactions: [Transaction]) {
+    private func mapToTransactionSections(transactions: [Transaction]) {
         var transactionSections: [TransactionSection] = []
 
         // Iterate through transactions and group them by date
