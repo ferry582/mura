@@ -66,6 +66,11 @@ class TransactionCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        resetCellAppearance()
+    }
+    
     // MARK: - UI Set Up
     private func setupView() {
         contentView.backgroundColor = UIColor.cardBg
@@ -91,6 +96,12 @@ class TransactionCell: UITableViewCell {
             amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12)
         ])
         
+    }
+    
+    private func resetCellAppearance() {
+        self.layer.cornerRadius = 0
+        self.clipsToBounds = false
+        self.layer.maskedCorners = []
     }
     
     func setupLastCell() {

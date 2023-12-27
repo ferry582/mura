@@ -9,7 +9,7 @@ import UIKit
 import MonthYearWheelPicker
 import RxSwift
 
-class DashboardViewController: UIViewController, AddTransactionViewControllerDelegate {
+class DashboardViewController: UIViewController {
     
     // MARK: - Variables
     private let viewModel: DashboardViewModel
@@ -226,13 +226,16 @@ class DashboardViewController: UIViewController, AddTransactionViewControllerDel
         }, completion: completion)
     }
     
-    // MARK: - Callback Methods
+    // MARK: - Callbacks
     func didTapDateButton(){
         monthYearDatePicker.isHidden = false
         toolbar.isHidden = false
         animateDatePicker(to: 0)
     }
     
+}
+
+extension DashboardViewController: AddTransactionViewControllerDelegate {
     func didTransactionCreated() {
         Task {
             await viewModel.getTransactions(in: selectedMonthYear)

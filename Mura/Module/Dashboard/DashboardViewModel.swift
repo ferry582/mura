@@ -42,7 +42,8 @@ class DashboardViewModel {
         let result = await useCase.getTransactions(startDate: firstDay!, endDate: lastDay!)
         switch result {
         case .success(let transactions):
-            mapToTransactionSections(transactions: transactions)
+            let mappedTransactions = mapToTransactionSections(transactions: transactions)
+            transactionSectionSubject.onNext(mappedTransactions)
         case .failure(let error):
             errorSubject.onNext(error)
         }
@@ -50,10 +51,10 @@ class DashboardViewModel {
         isLoadingRelay.accept(false)
     }
     
-    private func mapToTransactionSections(transactions: [Transaction]) {
+    private func mapToTransactionSections(transactions: [Transaction]) -> [TransactionSection] {
         var transactionSections: [TransactionSection] = []
 
-        // Iterate through transactions and group them by date
+        // Group transactions by date
         for transaction in transactions {
             let sectionDate = Calendar.current.startOfDay(for: transaction.date)
 
@@ -65,7 +66,7 @@ class DashboardViewModel {
                 transactionSections.append(newSection)
             }
         }
-        transactionSectionSubject.onNext(transactionSections)
+        return transactionSections
     }
 
 }

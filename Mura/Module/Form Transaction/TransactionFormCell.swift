@@ -47,6 +47,7 @@ class TransactionFormCell: UITableViewCell {
     
     func setupSingleRow() {
         self.layer.cornerRadius = 10
+        self.clipsToBounds = true
         separatorView.isHidden = true
     }
     
@@ -54,7 +55,6 @@ class TransactionFormCell: UITableViewCell {
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        // Note: Kalau pakai contentView.layer.cornerRadius = 10, maka dibelakangnya masih ada view cell default yang mana corner radius-nya tidak ikut berubah
     }
     
     func setupLastRow(){

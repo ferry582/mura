@@ -23,7 +23,7 @@ struct TransactionCoreDataSourceImpl: TransactionDataSource {
     }
     
     func getAll(startDate: Date, endDate: Date) async throws -> [Transaction] {
-        let predicate = NSPredicate(format: "date > %@ AND date < %@", startDate as NSDate, endDate as NSDate)
+        let predicate = NSPredicate(format: "date >= %@ AND date < %@", startDate as NSDate, endDate as NSDate)
         let request = TransactionEntity.fetchRequest()
         request.predicate = predicate
         return try container.viewContext.fetch(request).map { transactionEntity in
