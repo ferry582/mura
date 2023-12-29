@@ -47,11 +47,7 @@ class DashboardViewModel {
     func getTransactions(in selectedMonthYear: Date) async {
         _isLoading.accept(true)
         
-        let calendar = Calendar.current
-        let firstDay = calendar.dateInterval(of: .month, for: selectedMonthYear)?.start
-        let lastDay = calendar.dateInterval(of: .month, for: selectedMonthYear)?.end
-        
-        let result = await useCase.getTransactions(startDate: firstDay!, endDate: lastDay!)
+        let result = await useCase.getTransactions(startDate: firstDayofMonth(for: selectedMonthYear), endDate: lastDayofMonth(for: selectedMonthYear))
         switch result {
         case .success(let transactions):
             let mappedTransactions = mapToTransactionSections(transactions: transactions)
@@ -61,6 +57,14 @@ class DashboardViewModel {
         }
         
         _isLoading.accept(false)
+    }
+    
+    private func firstDayofMonth(for date: Date) -> Date {
+        return Calendar.current.dateInterval(of: .month, for: date)!.start
+    }
+    
+    private func lastDayofMonth(for date: Date) -> Date {
+        return Calendar.current.dateInterval(of: .month, for: date)!.end
     }
     
     private func mapToTransactionSections(transactions: [Transaction]) -> [SectionModel] {

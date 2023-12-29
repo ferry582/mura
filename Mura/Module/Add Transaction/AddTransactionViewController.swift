@@ -97,12 +97,10 @@ class AddTransactionViewController: UIViewController {
         viewModel.error
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { error in
-                if let error = error {
-                    if error is ValidationError {
-                        print((error as! ValidationError).message)
-                    } else {
-                        print(error.localizedDescription)
-                    }
+                if error is ValidationError {
+                    print((error as! ValidationError).message)
+                } else {
+                    print(error.localizedDescription)
                 }
             })
             .disposed(by: disposeBag)
@@ -111,9 +109,9 @@ class AddTransactionViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isLoading in
                 if isLoading {
-//                    print("loading...")
+                    print("[d] loading...")
                 } else {
-//                    print("stop loading")
+                    print("[d] stop loading")
                 }
             })
             .disposed(by: disposeBag)

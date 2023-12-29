@@ -33,13 +33,18 @@ class DashboardViewController: UIViewController {
         return table
     }()
     
-    private let dashboardTableViewHeader: DashboardHeaderView = {
+    private lazy var dashboardTableViewHeader: DashboardHeaderView = {
         let view = DashboardHeaderView()
-        //        view.translatesAutoresizingMaskIntoConstraints = false
+        view.didTapDateButton = {
+            self.monthYearDatePicker.isHidden = false
+            self.toolbar.isHidden = false
+            self.animateDatePicker(to: 0)
+        }
+//        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    private let monthYearDatePicker: MonthYearWheelPicker = {
+    private lazy var monthYearDatePicker: MonthYearWheelPicker = {
         let picker = MonthYearWheelPicker()
         var dateComponents = DateComponents()
         let userCalendar = Calendar(identifier: .gregorian)
@@ -54,18 +59,29 @@ class DashboardViewController: UIViewController {
         return picker
     }()
     
-    private let toolbar: UIToolbar = {
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonTapped))
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonTapped))
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
+    private lazy var toolbar: AccessoryToolbar = {
+        let toolbar = AccessoryToolbar()
+        toolbar.hasCancelButton()
         toolbar.isHidden = true
-        toolbar.tintColor = UIColor.main
-        toolbar.barTintColor = UIColor.cardBg
-        toolbar.isTranslucent = false
-        toolbar.setItems([cancelButton, flexSpace, doneButton], animated: true)
-        toolbar.translatesAutoresizingMaskIntoConstraints = false
+        toolbar.cancelAction = { [self] in
+            monthYearDatePicker.date = selectedMonthYear
+            animateDatePicker(to: monthYearDatePicker.frame.height) { _ in
+                self.monthYearDatePicker.isHidden = true
+                self.toolbar.isHidden = true
+            }
+        }
+        toolbar.doneAction = { [self] in
+            selectedMonthYear = monthYearDatePicker.date
+            dashboardTableViewHeader.monthYearText = selectedMonthYear.convertToMonthYearString()
+
+            Task { await viewModel.getTransactions(in: selectedMonthYear) }
+            
+            animateDatePicker(to: monthYearDatePicker.frame.height) { _ in
+                self.monthYearDatePicker.isHidden = true
+                self.toolbar.isHidden = true
+            }
+        }
+        
         return toolbar
     }()
     
@@ -87,15 +103,7 @@ class DashboardViewController: UIViewController {
         
         self.selectedMonthYear = monthYearDatePicker.date
         
-        dashboardTableViewHeader.didTapDateButton = {
-            self.monthYearDatePicker.isHidden = false
-            self.toolbar.isHidden = false
-            self.animateDatePicker(to: 0)
-        }
-        
-        Task {
-            await viewModel.getTransactions(in: selectedMonthYear)
-        }
+        Task { await viewModel.getTransactions(in: selectedMonthYear) }
         
         observeDataChanges()
         
@@ -210,42 +218,12 @@ class DashboardViewController: UIViewController {
         present(navigationController, animated: true)
     }
     
-    @objc private func doneButtonTapped() {
-        selectedMonthYear = monthYearDatePicker.date
-        dashboardTableViewHeader.monthYearText = selectedMonthYear.convertToMonthYearString()
-        
-        Task {
-            await viewModel.getTransactions(in: selectedMonthYear)
-        }
-        
-        animateDatePicker(to: self.monthYearDatePicker.frame.height) { _ in
-            self.monthYearDatePicker.isHidden = true
-            self.toolbar.isHidden = true
-        }
-    }
-    
-    @objc private func cancelButtonTapped() {
-        monthYearDatePicker.date = selectedMonthYear
-        animateDatePicker(to: self.monthYearDatePicker.frame.height) { _ in
-            self.monthYearDatePicker.isHidden = true
-            self.toolbar.isHidden = true
-        }
-    }
-    
     private func animateDatePicker(to constant: CGFloat, completion: ((Bool) -> Void)? = nil) {
         UIView.animate(withDuration: 0.3, animations: {
             self.datePickerBottomConstraint?.constant = constant
             self.view.layoutIfNeeded()
         }, completion: completion)
     }
-    
-    // MARK: - Callbacks
-    func didTapDateButton(){
-        monthYearDatePicker.isHidden = false
-        toolbar.isHidden = false
-        animateDatePicker(to: 0)
-    }
-    
 }
 
 extension DashboardViewController {

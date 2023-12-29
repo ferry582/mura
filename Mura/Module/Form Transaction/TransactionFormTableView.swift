@@ -12,7 +12,7 @@ enum TransactionFormType {
     case edit
 }
 
-struct Section {
+fileprivate struct Section {
     let cells: [TransactionFormCell]
 }
 
@@ -26,7 +26,7 @@ class TransactionFormTableView: UITableView {
     
     // MARK: - Variables
     let formType: TransactionFormType
-    var sections: [Section] = []
+    fileprivate var sections: [Section] = []
     private var selectedType: TransactionType = .expense
     private var selectedCategory: Category = .emptyCategory
     
@@ -52,20 +52,7 @@ class TransactionFormTableView: UITableView {
         picker.datePickerMode = .date
         picker.tintColor = UIColor.main
         picker.translatesAutoresizingMaskIntoConstraints = false
-        picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return picker
-    }()
-    
-    private let toolbar: UIToolbar = {
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        toolbar.tintColor = UIColor.main
-        toolbar.barTintColor = UIColor.cardBg
-        toolbar.isTranslucent = false
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonTapped))
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        toolbar.setItems([flexSpace, doneButton], animated: true)
-        return toolbar
     }()
     
     private lazy var amountTextField: UITextField = {
@@ -80,6 +67,14 @@ class TransactionFormTableView: UITableView {
         return textfield
     }() // note: kyknya lazy var ngebikin ada delay saat click textfieldnya diawal
     
+    private lazy var categoryToolbar: AccessoryToolbar = {
+        let toolbar = AccessoryToolbar()
+        toolbar.doneAction = {
+            self.categoryTextField.resignFirstResponder()
+        }
+        return toolbar
+    }()
+    
     private lazy var categoryTextField: NoCursorTextField = {
         let textfield = NoCursorTextField()
         let container = UIView(frame: CGRect(x: 0, y: 0, width: 11, height: 14))
@@ -91,7 +86,7 @@ class TransactionFormTableView: UITableView {
         textfield.text = Category.emptyCategory.name
         textfield.textAlignment = .right
         textfield.inputView = categoryPickerView
-        textfield.inputAccessoryView = toolbar
+        textfield.inputAccessoryView = categoryToolbar
         textfield.tintColor = UIColor.lightGray
         textfield.textColor = UIColor.lightGray
         textfield.rightViewMode = .always
@@ -195,10 +190,6 @@ class TransactionFormTableView: UITableView {
         self.endEditing(true) // Handle keyboard dismissal when the user taps outside the UITextField
     }
     
-    @objc private func doneButtonTapped() {
-        categoryTextField.resignFirstResponder()
-    }
-    
     @objc private func typeSegmentedChanged() {
         switch typeSegmentedControl.selectedSegmentIndex {
         case 0:
@@ -218,11 +209,7 @@ class TransactionFormTableView: UITableView {
         }
     }
     
-    @objc private func dateChanged(_ datePicker: UIDatePicker) {
-        
-    }
-    
-    // MARK: Getter & Setter Methods
+    // MARK: Getter & Setter
     func getFormData() -> Transaction {
         return Transaction(
             id: UUID(),
