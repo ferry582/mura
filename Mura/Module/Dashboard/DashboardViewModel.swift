@@ -8,32 +8,44 @@
 import Foundation
 import RxSwift
 import RxRelay
+import RxDataSources
 
-struct TransactionSection {
+struct SectionModel {
+    var header: SectionHeader
+    var items: [Transaction]
+}
+
+struct SectionHeader {
     let date: Date
     var totalAmount: Double
-    var transactions: [Transaction]
+}
+
+extension SectionModel: SectionModelType {
+    init(original: SectionModel, items: [Transaction]) {
+        self = original
+        self.items = items
+    }
 }
 
 class DashboardViewModel {
     
     private let useCase = TransactionInjection().getDashboardUseCase()
-    private let transactionSectionSubject = BehaviorSubject<[TransactionSection]>(value: [])
-    private let errorSubject = BehaviorSubject<Error?>(value: nil)
-    private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let _transactionSections = BehaviorSubject<[SectionModel]>(value: [])
+    private let _error = PublishSubject<Error>()
+    private let _isLoading = PublishRelay<Bool>()
     
-    var transactionSections: Observable<[TransactionSection]> {
-        transactionSectionSubject.asObserver()
+    var transactionSections: Observable<[SectionModel]> {
+        _transactionSections.asObservable()
     }
-    var error: Observable<Error?> {
-        return errorSubject.asObserver()
+    var error: Observable<Error> {
+        return _error.asObservable()
     }
     var isLoading: Observable<Bool> {
-        return isLoadingRelay.asObservable()
+        return _isLoading.asObservable()
     }
     
     func getTransactions(in selectedMonthYear: Date) async {
-        isLoadingRelay.accept(true)
+        _isLoading.accept(true)
         
         let calendar = Calendar.current
         let firstDay = calendar.dateInterval(of: .month, for: selectedMonthYear)?.start
@@ -43,30 +55,31 @@ class DashboardViewModel {
         switch result {
         case .success(let transactions):
             let mappedTransactions = mapToTransactionSections(transactions: transactions)
-            transactionSectionSubject.onNext(mappedTransactions)
+            _transactionSections.onNext(mappedTransactions)
         case .failure(let error):
-            errorSubject.onNext(error)
+            _error.onNext(error)
         }
         
-        isLoadingRelay.accept(false)
+        _isLoading.accept(false)
     }
     
-    private func mapToTransactionSections(transactions: [Transaction]) -> [TransactionSection] {
-        var transactionSections: [TransactionSection] = []
-
+    private func mapToTransactionSections(transactions: [Transaction]) -> [SectionModel] {
+        var transactionSections: [SectionModel] = []
+        
         // Group transactions by date
         for transaction in transactions {
             let sectionDate = Calendar.current.startOfDay(for: transaction.date)
-
-            if let index = transactionSections.firstIndex(where: { $0.date == sectionDate }) {
-                transactionSections[index].transactions.append(transaction)
-                transactionSections[index].totalAmount += transaction.amount
+            
+            if let index = transactionSections.firstIndex(where: { $0.header.date == sectionDate }) {
+                transactionSections[index].items.append(transaction)
+                transactionSections[index].header.totalAmount += transaction.amount
             } else {
-                let newSection = TransactionSection(date: sectionDate, totalAmount: transaction.amount, transactions: [transaction])
+                let newSection = SectionModel(header: SectionHeader(date: sectionDate, totalAmount: transaction.amount), items: [transaction])
                 transactionSections.append(newSection)
             }
         }
         return transactionSections
     }
-
+    
 }
+

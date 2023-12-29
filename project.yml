@@ -9,6 +9,9 @@ packages:
   RxCocoa:
     url: https://github.com/ReactiveX/RxSwift
     from: 6.6.0
+  RxDataSources:
+    url: https://github.com/RxSwiftCommunity/RxDataSources
+    from: 5.0.0
 configs:
   Mura-DEV: debug
   Mura: release
@@ -51,6 +54,7 @@ targets:
       - package: MonthYearWheelPicker
       - package: RxSwift
       - package: RxCocoa
+      - package: RxDataSources
 schemes:
   Mura:
     build:

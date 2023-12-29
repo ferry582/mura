@@ -8,6 +8,7 @@
 import UIKit
 import MonthYearWheelPicker
 import RxSwift
+import RxDataSources
 
 class DashboardViewController: UIViewController {
     
@@ -16,12 +17,8 @@ class DashboardViewController: UIViewController {
     private let reportViewModel: ReportViewModel
     private let disposeBag = DisposeBag()
     private var datePickerBottomConstraint: NSLayoutConstraint?
-    private var transactionSections: [TransactionSection] = [] {
-        didSet {
-            dashboardTableView.reloadData()
-        }
-    }
     private var selectedMonthYear = Date()
+    private let dataSource = DashboardViewController.dataSource()
     
     // MARK: - UI Components
     private let dashboardTableView: UITableView = {
@@ -88,9 +85,6 @@ class DashboardViewController: UIViewController {
         setupNavBar()
         setupView()
         
-        self.dashboardTableView.delegate = self
-        self.dashboardTableView.dataSource = self
-        
         self.selectedMonthYear = monthYearDatePicker.date
         
         dashboardTableViewHeader.didTapDateButton = {
@@ -106,26 +100,19 @@ class DashboardViewController: UIViewController {
         observeDataChanges()
         
         dashboardTableViewHeader.balancePercentText = reportViewModel.getBalancePercentText()
+        
+        configureSectionModel()
     }
     
     // MARK: - Observer
     private func observeDataChanges() {
-        viewModel.transactionSections
-            .observe(on: MainScheduler.instance)
-            .subscribe (onNext: { [weak self] transactionSections in
-                self?.transactionSections = transactionSections
-            })
-            .disposed(by: disposeBag)
-        
         viewModel.error
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { error in
-                if let error = error {
-                    if error is ValidationError {
-                        print((error as! ValidationError).message)
-                    } else {
-                        print(error.localizedDescription)
-                    }
+                if error is ValidationError {
+                    print((error as! ValidationError).message)
+                } else {
+                    print(error.localizedDescription)
                 }
             })
             .disposed(by: disposeBag)
@@ -134,15 +121,41 @@ class DashboardViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isLoading in
                 if isLoading {
-                    print("loading...")
+                    print("[d] loading...")
                 } else {
-                    print("stop loading")
+                    print("[d] stop loading")
                 }
             })
             .disposed(by: disposeBag)
     }
     
     // MARK: - UI Setup
+    private func configureSectionModel() {
+        viewModel.transactionSections
+            .filter({ [weak self] section in
+                DispatchQueue.main.async { self?.dashboardTableView.reloadData() }
+                if section.isEmpty {
+                    print("[d] section data empty")
+                } else {
+                    print("[d] section data exist: \(section.count)")
+                }
+                return true
+            })
+            .bind(to: dashboardTableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        dashboardTableView
+            .rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+        dashboardTableView.rx.modelSelected(Transaction.self)
+            .asDriver()
+            .drive(onNext: { [weak self] transaction in
+                print("[d] transaction id: \(transaction.id), with amount: \(transaction.amount)")
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func setupNavBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.textMain]
@@ -235,6 +248,22 @@ class DashboardViewController: UIViewController {
     
 }
 
+extension DashboardViewController {
+    static func dataSource() -> RxTableViewSectionedReloadDataSource<SectionModel> {
+        return RxTableViewSectionedReloadDataSource<SectionModel>(
+            configureCell: { _, tableView, indexPath, item in
+                let cell = tableView.dequeueReusableCell(withIdentifier: TransactionCell.identifier, for: indexPath) as! TransactionCell
+                cell.configure(with: item)
+                
+                let isLastCell = tableView.numberOfRows(inSection: indexPath.section)-1 == indexPath.row
+                if isLastCell {
+                    cell.setupLastCell()
+                }
+                return cell
+            })
+    }
+}
+
 extension DashboardViewController: AddTransactionViewControllerDelegate {
     func didTransactionCreated() {
         Task {
@@ -243,47 +272,15 @@ extension DashboardViewController: AddTransactionViewControllerDelegate {
     }
 }
 
-extension DashboardViewController: UITableViewDelegate, UITableViewDataSource {
-
-    // MARK: SECTION HEADER CELL
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return self.transactionSections.count
-    }
-    
+extension DashboardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: TransactionSectionHeader.identifier) as? TransactionSectionHeader else {
             fatalError("Failed to create transaction header cell")
         }
-        let date = self.transactionSections[section].date
-        let totalAmount = self.transactionSections[section].totalAmount
+        let date = dataSource[section].header.date
+        let totalAmount = dataSource[section].header.totalAmount
         header.configure(date: date, totalAmount: totalAmount)
         return header
     }
-    
-    // MARK: CELLS
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.transactionSections[section].transactions.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TransactionCell.identifier, for: indexPath) as? TransactionCell
-        cell?.configure(with: self.transactionSections[indexPath.section].transactions[indexPath.row])
-        
-        let isLastCell = tableView.numberOfRows(inSection: indexPath.section)-1 == indexPath.row
-        if isLastCell {
-            cell?.setupLastCell()
-        }
-        
-        return cell ?? UITableViewCell()
-    }
-    
-    // MARK: SECTION FOOTER CELL
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let view = UIView()
-        return view
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        15 // Give spacing 15 between section
-    }
 }
+
