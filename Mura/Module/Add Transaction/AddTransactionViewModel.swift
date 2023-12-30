@@ -12,22 +12,22 @@ import RxCocoa
 class AddTransactionViewModel {
     
     private let useCase = TransactionInjection().getAddTransactionUseCase()
-    private let transactionCreatedSubject = PublishSubject<Void>()
-    private let errorSubject = BehaviorSubject<Error?>(value: nil)
-    private let isLoadingRelay = BehaviorRelay<Bool>(value: false)
+    private let _transactionCreated = PublishSubject<Void>()
+    private let _error = PublishSubject<Error>()
+    private let _isLoading = PublishRelay<Bool>()
     
     var transactionCreated: Observable<Void> {
-        return transactionCreatedSubject.asObserver()
+        return _transactionCreated.asObservable()
     }
-    var error: Observable<Error?> {
-        return errorSubject.asObserver()
+    var error: Observable<Error> {
+        return _error.asObservable()
     }
     var isLoading: Observable<Bool> {
-        return isLoadingRelay.asObservable()
+        return _isLoading.asObservable()
     }
     
     func createTransaction(data: inout Transaction) async {
-        isLoadingRelay.accept(true)
+        _isLoading.accept(true)
         
         do {
             // Transaction data validation
@@ -39,14 +39,14 @@ class AddTransactionViewModel {
             let result = await useCase.createTransaction(data)
             switch result {
             case .success:
-                transactionCreatedSubject.onNext(())
+                _transactionCreated.onNext(())
             case .failure(let error):
-                errorSubject.onNext(error)
+                _error.onNext(error)
             }
         } catch {
-            errorSubject.onNext(error)
+            _error.onNext(error)
         }
         
-        isLoadingRelay.accept(false)
+        _isLoading.accept(false)
     }
 }

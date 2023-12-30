@@ -60,7 +60,7 @@ class DashboardHeaderView: UIView {
     private let balanceAmountLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
-        label.text = "Rp300.000"
+        label.text = "Rp-300.000"
         label.textColor = UIColor.textMain
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -135,7 +135,7 @@ class DashboardHeaderView: UIView {
     private let expenseAmountLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        label.text = "Rp300.000"
+        label.text = "Rp600.000"
         label.textColor = UIColor.textMain
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

@@ -24,6 +24,10 @@ extension UIColor {
         UIColor(named: "TextSecondaryColor")!
     }
     
+    static var textfieldText: UIColor {
+        UIColor(named: "TextfieldTextColor")!
+    }
+    
     static var cardBg: UIColor {
         UIColor(named: "CardBackgroundColor")!
     }
