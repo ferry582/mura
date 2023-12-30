@@ -28,7 +28,6 @@ extension SectionModel: SectionModelType {
 }
 
 class DashboardViewModel {
-    
     private let useCase = TransactionInjection().getDashboardUseCase()
     private let _transactionSections = BehaviorSubject<[SectionModel]>(value: [])
     private let _error = PublishSubject<Error>()

@@ -42,7 +42,7 @@ class TransactionFormTableView: UITableView {
     private let noteTextField: UITextField = {
         let textfield = UITextField()
         textfield.placeholder = "Notes"
-        textfield.textColor = .lightGray
+        textfield.textColor = .textfieldText
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
@@ -62,7 +62,7 @@ class TransactionFormTableView: UITableView {
         textfield.placeholder = "0\(decimalSeparator)00"
         textfield.textAlignment = .right
         textfield.keyboardType = .decimalPad
-        textfield.textColor = .lightGray
+        textfield.textColor = .textfieldText
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }() // note: kyknya lazy var ngebikin ada delay saat click textfieldnya diawal
@@ -87,8 +87,8 @@ class TransactionFormTableView: UITableView {
         textfield.textAlignment = .right
         textfield.inputView = categoryPickerView
         textfield.inputAccessoryView = categoryToolbar
-        textfield.tintColor = UIColor.lightGray
-        textfield.textColor = UIColor.lightGray
+        textfield.tintColor = UIColor.gray
+        textfield.textColor = UIColor.gray
         textfield.rightViewMode = .always
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
