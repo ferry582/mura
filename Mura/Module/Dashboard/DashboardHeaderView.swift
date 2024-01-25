@@ -60,7 +60,7 @@ class DashboardHeaderView: UIView {
     private let balanceAmountLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
-        label.text = "Rp-300.000"
+        label.text = "-300.000"
         label.textColor = UIColor.textMain
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -135,7 +135,7 @@ class DashboardHeaderView: UIView {
     private let expenseAmountLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        label.text = "Rp600.000"
+        label.text = "600.000"
         label.textColor = UIColor.textMain
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -184,7 +184,7 @@ class DashboardHeaderView: UIView {
     private let incomeAmountLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        label.text = "Rp300.000"
+        label.text = "300.000"
         label.textColor = UIColor.textMain
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -208,7 +208,7 @@ class DashboardHeaderView: UIView {
     private let hstackExpenseIncomeCard: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
-        sv.spacing = 15
+        sv.spacing = 16
         sv.alignment = .fill
         sv.distribution = .fillEqually
         sv.translatesAutoresizingMaskIntoConstraints = false
@@ -257,11 +257,11 @@ class DashboardHeaderView: UIView {
             dateButton.leadingAnchor.constraint(equalTo: leadingAnchor),
             dateButton.heightAnchor.constraint(equalToConstant: 27),
             
-            vstackBalanceCard.topAnchor.constraint(equalTo: dateButton.bottomAnchor, constant: 15),
+            vstackBalanceCard.topAnchor.constraint(equalTo: dateButton.bottomAnchor, constant: 16),
             vstackBalanceCard.leadingAnchor.constraint(equalTo: leadingAnchor),
             vstackBalanceCard.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            hstackExpenseIncomeCard.topAnchor.constraint(equalTo: vstackBalanceCard.bottomAnchor, constant: 15),
+            hstackExpenseIncomeCard.topAnchor.constraint(equalTo: vstackBalanceCard.bottomAnchor, constant: 16),
             hstackExpenseIncomeCard.leadingAnchor.constraint(equalTo: leadingAnchor),
             hstackExpenseIncomeCard.trailingAnchor.constraint(equalTo: trailingAnchor),
             
@@ -273,7 +273,7 @@ class DashboardHeaderView: UIView {
             
             transactionTitleLabel.topAnchor.constraint(equalTo: hstackExpenseIncomeCard.bottomAnchor, constant: 25),
             transactionTitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            transactionTitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
+            transactionTitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             
         ])
     }

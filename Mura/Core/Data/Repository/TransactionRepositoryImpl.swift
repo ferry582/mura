@@ -8,8 +8,8 @@
 import Foundation
 
 struct TransactionRepositoryImpl: TransactionRepository {
-    
     private let dataSource: TransactionDataSource
+    
     static let shared: (TransactionDataSource) -> TransactionRepository = { dataSource in
         return TransactionRepositoryImpl(dataSource: dataSource)
     }
@@ -23,4 +23,11 @@ struct TransactionRepositoryImpl: TransactionRepository {
         try await dataSource.create(transaction: transaction)
     }
     
+    func updateTransaction(id: UUID, newTransaction: Transaction) async throws {
+        try await dataSource.update(id: id, newTransaction: newTransaction)
+    }
+    
+    func deleteTransaction(id: UUID) async throws {
+        try await dataSource.delete(id: id)
+    }
 }

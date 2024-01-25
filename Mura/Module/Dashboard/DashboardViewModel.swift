@@ -31,7 +31,7 @@ class DashboardViewModel {
     private let useCase = TransactionInjection().getDashboardUseCase()
     private let _transactionSections = BehaviorSubject<[SectionModel]>(value: [])
     private let _error = PublishSubject<Error>()
-    private let _isLoading = PublishRelay<Bool>()
+    private let _isLoading = BehaviorSubject<Bool>(value: false)
     
     var transactionSections: Observable<[SectionModel]> {
         _transactionSections.asObservable()
@@ -44,7 +44,7 @@ class DashboardViewModel {
     }
     
     func getTransactions(in selectedMonthYear: Date) async {
-        _isLoading.accept(true)
+        _isLoading.onNext(true)
         
         let result = await useCase.getTransactions(startDate: firstDayofMonth(for: selectedMonthYear), endDate: lastDayofMonth(for: selectedMonthYear))
         switch result {
@@ -55,7 +55,7 @@ class DashboardViewModel {
             _error.onNext(error)
         }
         
-        _isLoading.accept(false)
+        _isLoading.onNext(false)
     }
     
     private func firstDayofMonth(for date: Date) -> Date {

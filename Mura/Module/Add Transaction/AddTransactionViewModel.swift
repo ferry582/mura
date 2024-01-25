@@ -14,7 +14,7 @@ class AddTransactionViewModel {
     private let useCase = TransactionInjection().getAddTransactionUseCase()
     private let _transactionCreated = PublishSubject<Void>()
     private let _error = PublishSubject<Error>()
-    private let _isLoading = PublishRelay<Bool>()
+    private let _isLoading = BehaviorSubject<Bool>(value: false)
     
     var transactionCreated: Observable<Void> {
         return _transactionCreated.asObservable()
@@ -27,7 +27,7 @@ class AddTransactionViewModel {
     }
     
     func createTransaction(data: inout Transaction) async {
-        _isLoading.accept(true)
+        _isLoading.onNext(true)
         
         do {
             // Transaction data validation
@@ -47,6 +47,6 @@ class AddTransactionViewModel {
             _error.onNext(error)
         }
         
-        _isLoading.accept(false)
+        _isLoading.onNext(false)
     }
 }

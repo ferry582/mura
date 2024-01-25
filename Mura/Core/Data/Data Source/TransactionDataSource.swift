@@ -9,8 +9,7 @@ import Foundation
 
 protocol TransactionDataSource {
     func getAll(startDate: Date, endDate: Date) async throws -> [Transaction]
-//    func getById(_ id: UUID) async throws -> Transaction?
-//    func delete(_ id: UUID) async throws -> ()
+    func delete(id: UUID) async throws -> ()
     func create(transaction: Transaction) async throws -> ()
-//    func update(id: UUID, transaction: Transaction) async throws -> ()
+    func update(id: UUID, newTransaction: Transaction) async throws -> ()
 }

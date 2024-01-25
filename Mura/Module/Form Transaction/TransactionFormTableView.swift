@@ -28,7 +28,16 @@ class TransactionFormTableView: UITableView {
     let formType: TransactionFormType
     fileprivate var sections: [Section] = []
     private var selectedType: TransactionType = .expense
-    private var selectedCategory: Category = .emptyCategory
+    private var selectedCategory: Category = .emptyCategory {
+        didSet {
+            if selectedCategory == .emptyCategory {
+                categoryTextField.text = Category.emptyCategory.name
+                categoryTextField.resignFirstResponder()
+                categoryPickerView.selectRow(0, inComponent: 0, animated: true)
+            }
+        }
+    }
+    var didDeleteTapped: (() -> Void)?
     
     // MARK: UI Components
     private let typeSegmentedControl: UISegmentedControl = {
@@ -65,7 +74,7 @@ class TransactionFormTableView: UITableView {
         textfield.textColor = .textfieldText
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
-    }() // note: kyknya lazy var ngebikin ada delay saat click textfieldnya diawal
+    }()
     
     private lazy var categoryToolbar: AccessoryToolbar = {
         let toolbar = AccessoryToolbar()
@@ -177,10 +186,25 @@ class TransactionFormTableView: UITableView {
             self?.noteTextField.becomeFirstResponder()
         }
         
+        let deleteLabel = UILabel()
+        deleteLabel.text = "Delete"
+        deleteLabel.textColor = .red
+        deleteLabel.translatesAutoresizingMaskIntoConstraints = false
+        let deleteCell = TransactionFormCell(style: .value1, reuseIdentifier: nil)
+        deleteCell.contentView.addSubview(deleteLabel)
+        deleteCell.contentView.addConstraints([
+            deleteLabel.centerYAnchor.constraint(equalTo: deleteCell.contentView.centerYAnchor),
+            deleteLabel.centerXAnchor.constraint(equalTo: deleteCell.contentView.centerXAnchor)
+        ])
+        deleteCell.didSelect = { [weak self] in
+            self?.didDeleteTapped?()
+        }
+        
         sections = [
             Section(cells: [typeCell]),
             Section(cells: [amountCell, categoryCell, dateCell]),
-            Section(cells: [noteCell])
+            Section(cells: [noteCell]),
+            formType == .edit ? Section(cells: [ deleteCell]) : Section(cells: [])
         ]
     }
     
@@ -194,16 +218,10 @@ class TransactionFormTableView: UITableView {
         switch typeSegmentedControl.selectedSegmentIndex {
         case 0:
             self.selectedType = .expense
-            self.categoryTextField.text = Category.emptyCategory.name
             self.selectedCategory = Category.emptyCategory
-            categoryTextField.resignFirstResponder()
-            categoryPickerView.selectRow(0, inComponent: 0, animated: true)
         case 1:
             self.selectedType = .income
-            self.categoryTextField.text = Category.emptyCategory.name
             self.selectedCategory = Category.emptyCategory
-            categoryTextField.resignFirstResponder()
-            categoryPickerView.selectRow(0, inComponent: 0, animated: true)
         default:
             break
         }
@@ -221,10 +239,21 @@ class TransactionFormTableView: UITableView {
     }
     
     func setFormData(transaction: Transaction) {
+        selectedType = transaction.type
+        let typeIndex = transaction.type == .expense ? 0 : 1
+        typeSegmentedControl.selectedSegmentIndex = typeIndex
+        
+        selectedCategory = transaction.category
+        categoryTextField.text = transaction.category.name
+        categoryPickerView.selectRow(transaction.category.id, inComponent: 0, animated: true)
+        
+        amountTextField.text = convertToLocalSeparator(amount: abs(transaction.amount))
+        datePicker.date = transaction.date
         noteTextField.text = transaction.note
     }
     
-    func convertToDecimalSeparator(amountText: String) -> Double {
+    // MARK: Formatter
+    private func convertToDecimalSeparator(amountText: String) -> Double {
         let dotSeparator = "."
         let decimalSeparator = NSLocale.current.decimalSeparator ?? dotSeparator
         let checkedAmount = if decimalSeparator != dotSeparator {
@@ -233,6 +262,18 @@ class TransactionFormTableView: UITableView {
             amountText
         }
         return Double(checkedAmount) ?? 0
+    }
+    
+    private func convertToLocalSeparator(amount: Double) -> String {
+        let amountStr = String(amount)
+        let dotSeparator = "."
+        let decimalSeparator = NSLocale.current.decimalSeparator ?? dotSeparator
+        let convertedAmount = if decimalSeparator != dotSeparator {
+            amountStr.replacingOccurrences(of: dotSeparator, with: decimalSeparator)
+        } else {
+            amountStr
+        }
+        return convertedAmount
     }
     
 }
@@ -332,6 +373,10 @@ extension TransactionFormTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return if indexPath.section == tableView.numberOfSections - 1 {
+            44
+        } else {
+            60
+        }
     }
 }

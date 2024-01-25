@@ -13,7 +13,7 @@ enum TransactionType: String {
 }
 
 struct Transaction: Identifiable {
-    let id: UUID
+    var id: UUID
     let date: Date
     let category: Category
     let note: String?

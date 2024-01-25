@@ -1,26 +1,28 @@
 //
-//  AddTransactionViewController.swift
+//  DetailTransactionViewController.swift
 //  Mura
 //
-//  Created by Ferry Dwianta P on 08/10/23.
+//  Created by Ferry Dwianta P on 16/01/24.
 //
 
 import UIKit
 import RxSwift
 
-protocol AddTransactionViewControllerDelegate: AnyObject {
-    func didTransactionCreated()
+protocol DetailTransactionViewControllerDelegate: AnyObject {
+    func didTransactionChanged()
 }
 
-class AddTransactionViewController: UIViewController {
+class DetailTransactionViewController: UIViewController {
     
     // MARK: - Variables
-    private let viewModel: AddTransactionViewModel
+    private let viewModel: DetailTransactionViewModel
+    private let transaction: Transaction
     private let disposeBag = DisposeBag()
-    weak var delegate: AddTransactionViewControllerDelegate?
+    weak var delegate: DetailTransactionViewControllerDelegate?
     
-    init(viewModel: AddTransactionViewModel) {
+    init(viewModel: DetailTransactionViewModel, transaction: Transaction) {
         self.viewModel = viewModel
+        self.transaction = transaction
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,7 +33,7 @@ class AddTransactionViewController: UIViewController {
     // MARK: - UI Components
     private let loadingIndicator = LoadingIndicator()
     private let transactionFormView: TransactionFormTableView = {
-        let table = TransactionFormTableView(formType: .add)
+        let table = TransactionFormTableView(formType: .edit)
         table.backgroundColor = .none
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
@@ -44,16 +46,19 @@ class AddTransactionViewController: UIViewController {
         setupNavBar()
         setupView()
         
+        transactionFormView.setFormData(transaction: transaction)
+        
         observeDataChanges()
+        addDeleteAction()
     }
     
     // MARK: - UI Setup
     private func setupNavBar() {
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
-        let addButton = UIBarButtonItem(title: "Add", style: .done, target: self, action: #selector(doneTapped))
+        let addButton = UIBarButtonItem(title: "Update", style: .done, target: self, action: #selector(doneTapped))
         navigationItem.leftBarButtonItem = cancelButton
         navigationItem.rightBarButtonItem = addButton
-        navigationItem.title = "New Transaction"
+        navigationItem.title = "Detail"
         navigationItem.titleView?.tintColor = UIColor.textMain
         self.navigationController?.navigationBar.tintColor = UIColor.main
     }
@@ -82,20 +87,34 @@ class AddTransactionViewController: UIViewController {
     }
     
     @objc func doneTapped() {
-//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         Task {
-            var transaction = transactionFormView.getFormData()
-            await viewModel.createTransaction(data: &transaction)
+            var newTransaction = transactionFormView.getFormData()
+            await viewModel.updateTransaction(old: transaction, new: &newTransaction)
+        }
+    }
+    
+    private func addDeleteAction() {
+        transactionFormView.didDeleteTapped = {
+            Alert.present(
+                title: "Delete",
+                message: "Are you sure delete this transaction?",
+                actions: .close, .delete(handler: {
+                    Task {
+                        await self.viewModel.deleteTransaction(id: self.transaction.id)
+                    }
+                }),
+                from: self
+            )
         }
     }
     
     // MARK: - Observers
     func observeDataChanges() {
-        viewModel.transactionCreated
+        viewModel.transactionChanged
             .observe(on: MainScheduler.instance)
             .subscribe (onNext: { [weak self] isCreated in
                 self?.dismiss(animated: true, completion: nil)
-                self?.delegate?.didTransactionCreated()
+                self?.delegate?.didTransactionChanged()
             })
             .disposed(by: disposeBag)
         
@@ -106,7 +125,7 @@ class AddTransactionViewController: UIViewController {
                     Alert.present(
                         title: "Warning!",
                         message: (error as! ValidationError).message,
-                        actions: .close, 
+                        actions: .close,
                         from: self
                     )
                 } else {
@@ -127,3 +146,4 @@ class AddTransactionViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 }
+

@@ -22,6 +22,7 @@ protocol ValidatorConvertible {
 enum ValidatorType {
     case category
     case requiredField(field: String)
+    case allowUpdateTransaction(oldTransaction: Transaction)
 }
 
 enum ValidatorFactory {
@@ -31,35 +32,56 @@ enum ValidatorFactory {
             return CategoryValidator()
         case .requiredField(field: let fieldName):
             return RequiredFieldValidator(fieldName)
+        case .allowUpdateTransaction(oldTransaction: let oldTransaction):
+            return AllowUpdateValidator(oldTransaction: oldTransaction)
         }
-    }
-}
-
-struct CategoryValidator: ValidatorConvertible {
-    func validated(_ value: Any?) throws {
-        guard value as? String != "None" else {
-            throw ValidationError("Category is not selected yet" )
-        }
-    }
-}
-
-struct RequiredFieldValidator: ValidatorConvertible {
-    private let fieldName: String
-    
-    init(_ field: String) {
-        fieldName = field
     }
     
-    func validated(_ value: Any?) throws {
-        guard let value else {
-            throw ValidationError("Required field " + fieldName)
+    struct CategoryValidator: ValidatorConvertible {
+        func validated(_ value: Any?) throws {
+            guard value as? String != "None" else {
+                throw ValidationError("Category is not selected yet" )
+            }
         }
-        guard value as? String != "" else {
-            throw ValidationError("Required field " + fieldName)
+    }
+    
+    struct RequiredFieldValidator: ValidatorConvertible {
+        private let fieldName: String
+        
+        init(_ field: String) {
+            fieldName = field
         }
-        guard value as? Double != 0 else {
-            throw ValidationError("Required field " + fieldName)
+        
+        func validated(_ value: Any?) throws {
+            guard let value else {
+                throw ValidationError("Required field " + fieldName)
+            }
+            guard value as? String != "" else {
+                throw ValidationError("Required field " + fieldName)
+            }
+            guard value as? Double != 0 else {
+                throw ValidationError("Required field " + fieldName)
+            }
+        }
+    }
+    
+    struct AllowUpdateValidator: ValidatorConvertible {
+        private let oldTransaction: Transaction
+        
+        init(oldTransaction: Transaction) {
+            self.oldTransaction = oldTransaction
+        }
+        
+        func validated(_ value: Any?) throws {
+            if let value = value as? Transaction {
+                if oldTransaction.date == value.date &&
+                    oldTransaction.category == value.category &&
+                    oldTransaction.note == value.note &&
+                    oldTransaction.amount == value.amount &&
+                    oldTransaction.type == value.type {
+                    throw ValidationError("There is no changes!")
+                }
+            }
         }
     }
 }
-

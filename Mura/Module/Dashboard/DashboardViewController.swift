@@ -21,6 +21,7 @@ class DashboardViewController: UIViewController {
     private let dataSource = DashboardViewController.dataSource()
     
     // MARK: - UI Components
+    private let loadingIndicator = LoadingIndicator()
     private let dashboardTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.separatorStyle = .none
@@ -40,7 +41,7 @@ class DashboardViewController: UIViewController {
             self.toolbar.isHidden = false
             self.animateDatePicker(to: 0)
         }
-//        view.translatesAutoresizingMaskIntoConstraints = false
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -73,7 +74,7 @@ class DashboardViewController: UIViewController {
         toolbar.doneAction = { [self] in
             selectedMonthYear = monthYearDatePicker.date
             dashboardTableViewHeader.monthYearText = selectedMonthYear.convertToMonthYearString()
-
+            
             Task { await viewModel.getTransactions(in: selectedMonthYear) }
             
             animateDatePicker(to: monthYearDatePicker.frame.height) { _ in
@@ -109,7 +110,7 @@ class DashboardViewController: UIViewController {
         
         dashboardTableViewHeader.balancePercentText = reportViewModel.getBalancePercentText()
         
-        configureSectionModel()
+        setupRx()
     }
     
     // MARK: - Observer
@@ -129,16 +130,16 @@ class DashboardViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isLoading in
                 if isLoading {
-                    print("[d] loading...")
+                    self?.loadingIndicator.startLoading()
                 } else {
-                    print("[d] stop loading")
+                    self?.loadingIndicator.stopLoading()
                 }
             })
             .disposed(by: disposeBag)
     }
     
     // MARK: - UI Setup
-    private func configureSectionModel() {
+    private func setupRx() {
         viewModel.transactionSections
             .filter({ [weak self] section in
                 DispatchQueue.main.async { self?.dashboardTableView.reloadData() }
@@ -159,7 +160,13 @@ class DashboardViewController: UIViewController {
         dashboardTableView.rx.modelSelected(Transaction.self)
             .asDriver()
             .drive(onNext: { [weak self] transaction in
-                print("[d] transaction id: \(transaction.id), with amount: \(transaction.amount)")
+                let vc = DetailTransactionViewController(viewModel: DetailTransactionViewModel(), transaction: transaction)
+                vc.delegate = self
+                let navigationController = UINavigationController(rootViewController: vc)
+                if let sheet = navigationController.sheetPresentationController {
+                    sheet.detents = [.large()]
+                }
+                self?.present(navigationController, animated: true)
             })
             .disposed(by: disposeBag)
     }
@@ -178,14 +185,12 @@ class DashboardViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = UIColor.mainBg
         
-        dashboardTableViewHeader.frame = CGRect(x: 0, y: 0, width: dashboardTableView.frame.size.width, height: 305) // Height still hardcoded, because there is a bug when using constraint (there is extra space between header and cells)
-        dashboardTableView.tableHeaderView = dashboardTableViewHeader
-        //        dashboardTableView.tableHeaderView?.layoutIfNeeded()
-        
         view.addSubview(dashboardTableView)
         view.addSubview(monthYearDatePicker)
         view.addSubview(toolbar)
+        view.addSubview(loadingIndicator)
         
+        dashboardTableView.tableHeaderView = dashboardTableViewHeader
         datePickerBottomConstraint = monthYearDatePicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: monthYearDatePicker.frame.height)
         
         NSLayoutConstraint.activate([
@@ -194,7 +199,7 @@ class DashboardViewController: UIViewController {
             dashboardTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             dashboardTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            //            dashboardTableViewHeader.widthAnchor.constraint(equalTo: dashboardTableView.widthAnchor),
+            dashboardTableViewHeader.widthAnchor.constraint(equalTo: dashboardTableView.widthAnchor),
             
             monthYearDatePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             monthYearDatePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -203,6 +208,9 @@ class DashboardViewController: UIViewController {
             toolbar.bottomAnchor.constraint(equalTo: monthYearDatePicker.topAnchor),
             toolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
         
     }
@@ -248,6 +256,15 @@ extension DashboardViewController: AddTransactionViewControllerDelegate {
             await viewModel.getTransactions(in: selectedMonthYear)
         }
     }
+}
+
+extension DashboardViewController: DetailTransactionViewControllerDelegate {
+    func didTransactionChanged() {
+        Task {
+            await viewModel.getTransactions(in: selectedMonthYear)
+        }
+    }
+    
 }
 
 extension DashboardViewController: UITableViewDelegate {

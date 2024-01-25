@@ -50,7 +50,40 @@ struct TransactionCoreDataSourceImpl: TransactionDataSource {
         try saveContext()
     }
     
-    func saveContext() throws {
+    func update(id: UUID, newTransaction: Transaction) async throws {
+        let transactionEntity = try getEntityById(id)!
+        transactionEntity.amount = newTransaction.amount
+        transactionEntity.categoryId = Int16(newTransaction.category.id)
+        transactionEntity.date = newTransaction.date
+        transactionEntity.note = newTransaction.note
+        transactionEntity.type = newTransaction.type.rawValue
+        try saveContext()
+    }
+    
+    func delete(id: UUID) throws -> (){
+        let transactionEntity = try getEntityById(id)!
+        let context = container.viewContext;
+        context.delete(transactionEntity)
+        do{
+            try context.save()
+        }catch{
+            context.rollback()
+            throw error
+        }
+    }
+    
+    private func getEntityById(_ id: UUID)  throws  -> TransactionEntity?{
+        let request = TransactionEntity.fetchRequest()
+        request.fetchLimit = 1
+        request.predicate = NSPredicate(
+            format: "id = %@", id.uuidString)
+        let context =  container.viewContext
+        let transactionCoreDataEntity = try context.fetch(request)[0]
+        return transactionCoreDataEntity
+        
+    }
+    
+    private func saveContext() throws {
         let context = container.viewContext
         if context.hasChanges {
             try context.save()

@@ -14,12 +14,14 @@ class TransactionInjection {
     }
     
     func getAddTransactionUseCase() -> AddTransactionUseCase {
-        let repo = getRepo()
-        return AddTransactionUseCaseImpl(repository: repo)
+        return AddTransactionUseCaseImpl(repository: getRepo())
     }
     
     func getDashboardUseCase() -> DashboardUseCase {
-        let repo = getRepo()
-        return DashboardUseCaseImpl(repository: repo)
+        return DashboardUseCaseImpl(repository: getRepo())
+    }
+    
+    func getDetailTransactionUseCase() -> DetailTransactionUseCase {
+        return DetailTransactionUseCaseImpl(repository: getRepo())
     }
 }

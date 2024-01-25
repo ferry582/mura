@@ -9,8 +9,7 @@ import Foundation
 
 protocol TransactionRepository {
     func getTransactions(startDate: Date, endDate: Date) async throws -> [Transaction]
-//     func getTransaction(id: UUID) async -> Result<Transaction? , TransactionError>
-//     func deleteTransaction(_ id: UUID) async -> Result<Bool, TransactionError>
+    func deleteTransaction(id: UUID) async throws -> ()
     func createTransaction(_ transaction: Transaction) async throws -> ()
-//     func updateTransaction(_ transaction: Transaction) async -> Result<Bool, TransactionError>
+    func updateTransaction(id: UUID, newTransaction: Transaction) async throws -> ()
 }

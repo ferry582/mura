@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Category {
+struct Category: Equatable {
     let id: Int
     let name: String
     let icon: String
@@ -16,14 +16,14 @@ struct Category {
     
     static let expenseCategories =  [
         emptyCategory,
-        Category(id: 11, name: "Food", icon: "food"),
-        Category(id: 12, name: "Entertainment", icon: "entertainement"),
+        Category(id: 1, name: "Food", icon: "food"),
+        Category(id: 2, name: "Entertainment", icon: "entertainement"),
     ]
     
     static let incomeCategories = [
         emptyCategory,
-        Category(id: 21, name: "Salary", icon: "salary"),
-        Category(id: 22, name: "Gift", icon: "gift")
+        Category(id: 1, name: "Salary", icon: "salary"),
+        Category(id: 2, name: "Gift", icon: "gift")
     ]
     
     static func getCategoryById(categoryId: Int, transactionType: TransactionType) -> Category {

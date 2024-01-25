@@ -94,7 +94,7 @@ class TransactionSectionHeader: UITableViewHeaderFooterView {
             separatorView.bottomAnchor.constraint(equalTo: bgView.bottomAnchor, constant: 0),
             separatorView.leadingAnchor.constraint(equalTo: bgView.leadingAnchor, constant: 12),
             separatorView.trailingAnchor.constraint(equalTo: bgView.trailingAnchor, constant: -12),
-            separatorView.heightAnchor.constraint(equalToConstant: 1),
+            separatorView.heightAnchor.constraint(equalToConstant: 0.5),
             
             dayLabel.topAnchor.constraint(equalTo: bgView.topAnchor, constant: 12),
             dayLabel.bottomAnchor.constraint(equalTo: separatorView.topAnchor, constant: -12),
