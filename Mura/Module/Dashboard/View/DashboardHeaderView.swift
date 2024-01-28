@@ -6,21 +6,14 @@
 //
 
 import UIKit
+import RxSwift
 
 class DashboardHeaderView: UIView {
     
     // MARK: Variables
+    private let viewModel = ReportViewModel()
+    private let disposeBag = DisposeBag()
     var didTapDateButton: (() -> Void)?
-    var balancePercentText: NSMutableAttributedString = NSMutableAttributedString(string: "") {
-        didSet {
-            balancePercentageLabel.attributedText = balancePercentText
-        }
-    }
-    var monthYearText: String = "" {
-        didSet {
-            dateButton.setTitle(monthYearText, for: .normal)
-        }
-    }
     
     // MARK: - LifeCycle
     override init(frame: CGRect) {
@@ -28,6 +21,7 @@ class DashboardHeaderView: UIView {
         setupView()
         setupAction()
         configReportUI()
+        setupRx()
     }
     
     required init?(coder: NSCoder) {
@@ -66,30 +60,13 @@ class DashboardHeaderView: UIView {
         return label
     }()
     
-    private let chartIconImage: UIImageView = {
-        let iv = UIImageView()
-        iv.image = UIImage(named: "ChartPositiveIcon")
-        iv.contentMode = .scaleAspectFit
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        return iv
-    }()
-    
-    private let balancePercentageLabel: UILabel = {
+    private let balancePercentageChangeLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         label.text = "30% from february"
         label.textColor = UIColor.textMain
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-    
-    private let hstackBalancePercentage: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .horizontal
-        sv.alignment = .fill
-        sv.distribution = .fill
-        sv.spacing = 5
-        return sv
     }()
     
     private let vstackBalanceCard: UIStackView = {
@@ -228,23 +205,16 @@ class DashboardHeaderView: UIView {
     private func setupView() {
         self.addSubview(dateButton)
         
-        // Balance Card StackView
-        hstackBalancePercentage.addArrangedSubview(chartIconImage)
-        hstackBalancePercentage.addArrangedSubview(balancePercentageLabel)
-        
         vstackBalanceCard.addArrangedSubview(balanceTitleLabel)
         vstackBalanceCard.addArrangedSubview(balanceAmountLabel)
-        vstackBalanceCard.addArrangedSubview(hstackBalancePercentage)
+        vstackBalanceCard.addArrangedSubview(balancePercentageChangeLabel)
         
-        // Expense Card StackView
         vstackExpenseIcon.addArrangedSubview(expenseIconImage) // Set icon equal to vstackExpenseCard trailing
         [vstackExpenseIcon, expenseTitleLabel, expenseAmountLabel].forEach {vstackExpenseCard.addArrangedSubview($0)}
         
-        // Income Card StackView
         vstackIncomeIcon.addArrangedSubview(incomeIconImage) // Set icon equal to vstackIncomeCard trailing
         [vstackIncomeIcon, incomeTitleLabel, incomeAmountLabel].forEach {vstackIncomeCard.addArrangedSubview($0)}
         
-        // Expense and Income HStackView
         hstackExpenseIncomeCard.addArrangedSubview(vstackExpenseCard)
         hstackExpenseIncomeCard.addArrangedSubview(vstackIncomeCard)
         
@@ -279,7 +249,6 @@ class DashboardHeaderView: UIView {
     }
     
     private func configReportUI() {
-        self.chartIconImage.setImageColor(color: UIColor.main)
         self.expenseIconImage.setImageColor(color: UIColor.main)
         self.incomeIconImage.setImageColor(color: UIColor.main)
     }
@@ -287,13 +256,41 @@ class DashboardHeaderView: UIView {
     // MARK: - Setup Action
     private func setupAction() {
         dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
-        
     }
     
     @objc private func dateButtonTapped() {
         didTapDateButton?()
     }
     
+    // MARK: -Setup Observer
+    private func setupRx() {
+        viewModel.totalBalanceText
+            .bind(to: balanceAmountLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.balancePercentageText
+            .bind(to: balancePercentageChangeLabel.rx.attributedText)
+            .disposed(by: disposeBag)
+        
+        viewModel.expenseAmountText
+            .bind(to: expenseAmountLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.incomeAmountText
+            .bind(to: incomeAmountLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: -Setter
+    func updateReportInfo(with groupedTransactions: [GroupedTransaction], in selectedMonthYear: Date) {
+        Task {
+            await viewModel.updateReportInfo(with: groupedTransactions, in: selectedMonthYear)
+        }
+    }
+    
+    func updateSelectedMonthYear(with selectedMonthYear: Date) {
+        dateButton.setTitle(selectedMonthYear.convertToMonthYearString(), for: .normal)
+    }
 }
 
 

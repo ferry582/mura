@@ -14,10 +14,9 @@ class DashboardViewController: UIViewController {
     
     // MARK: - Variables
     private let viewModel: DashboardViewModel
-    private let reportViewModel: ReportViewModel
     private let disposeBag = DisposeBag()
     private var datePickerBottomConstraint: NSLayoutConstraint?
-    private var selectedMonthYear = Date()
+    private var selectedMonthYear = Date().firstDayofMonth()
     private let dataSource = DashboardViewController.dataSource()
     
     // MARK: - UI Components
@@ -73,7 +72,7 @@ class DashboardViewController: UIViewController {
         }
         toolbar.doneAction = { [self] in
             selectedMonthYear = monthYearDatePicker.date
-            dashboardTableViewHeader.monthYearText = selectedMonthYear.convertToMonthYearString()
+            dashboardTableViewHeader.updateSelectedMonthYear(with: selectedMonthYear)
             
             Task { await viewModel.getTransactions(in: selectedMonthYear) }
             
@@ -82,14 +81,12 @@ class DashboardViewController: UIViewController {
                 self.toolbar.isHidden = true
             }
         }
-        
         return toolbar
     }()
     
     // MARK: Life Cycle
-    init(viewModel: DashboardViewModel, reportViewModel: ReportViewModel = ReportViewModel()) {
+    init(viewModel: DashboardViewModel) {
         self.viewModel = viewModel
-        self.reportViewModel = reportViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -107,8 +104,6 @@ class DashboardViewController: UIViewController {
         Task { await viewModel.getTransactions(in: selectedMonthYear) }
         
         observeDataChanges()
-        
-        dashboardTableViewHeader.balancePercentText = reportViewModel.getBalancePercentText()
         
         setupRx()
     }
@@ -140,14 +135,13 @@ class DashboardViewController: UIViewController {
     
     // MARK: - UI Setup
     private func setupRx() {
-        viewModel.transactionSections
-            .filter({ [weak self] section in
+        viewModel.groupedTransactions
+            .filter({ [weak self] groupedTransactions in
                 DispatchQueue.main.async { self?.dashboardTableView.reloadData() }
-                if section.isEmpty {
+                if groupedTransactions.isEmpty {
                     print("[d] section data empty")
-                } else {
-                    print("[d] section data exist: \(section.count)")
                 }
+                self?.dashboardTableViewHeader.updateReportInfo(with: groupedTransactions, in: self!.selectedMonthYear)
                 return true
             })
             .bind(to: dashboardTableView.rx.items(dataSource: dataSource))
@@ -235,8 +229,8 @@ class DashboardViewController: UIViewController {
 }
 
 extension DashboardViewController {
-    static func dataSource() -> RxTableViewSectionedReloadDataSource<SectionModel> {
-        return RxTableViewSectionedReloadDataSource<SectionModel>(
+    static func dataSource() -> RxTableViewSectionedReloadDataSource<GroupedTransaction> {
+        return RxTableViewSectionedReloadDataSource<GroupedTransaction>(
             configureCell: { _, tableView, indexPath, item in
                 let cell = tableView.dequeueReusableCell(withIdentifier: TransactionCell.identifier, for: indexPath) as! TransactionCell
                 cell.configure(with: item)
@@ -264,7 +258,6 @@ extension DashboardViewController: DetailTransactionViewControllerDelegate {
             await viewModel.getTransactions(in: selectedMonthYear)
         }
     }
-    
 }
 
 extension DashboardViewController: UITableViewDelegate {

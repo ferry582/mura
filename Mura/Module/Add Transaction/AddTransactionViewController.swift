@@ -82,7 +82,6 @@ class AddTransactionViewController: UIViewController {
     }
     
     @objc func doneTapped() {
-//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         Task {
             var transaction = transactionFormView.getFormData()
             await viewModel.createTransaction(data: &transaction)

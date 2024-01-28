@@ -28,4 +28,19 @@ extension Date {
         dateFormatter.locale = Locale(identifier: Locale.current.identifier)
         return dateFormatter.string(from: self)
     }
+    
+    func convertToMonthNameString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM"
+        dateFormatter.locale = Locale(identifier: Locale.current.identifier)
+        return dateFormatter.string(from: self)
+    }
+    
+    func firstDayofMonth() -> Date {
+        return Calendar.current.dateInterval(of: .month, for: self)!.start
+    }
+    
+    func lastDayofMonth() -> Date {
+        return Calendar.current.dateInterval(of: .month, for: self)!.end
+    }
 }

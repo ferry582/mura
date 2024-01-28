@@ -10,6 +10,7 @@
 * Clean Architecture with MVVM
 * RxSwift
 * CoreData
+* MonthYearWheelPicker (https://github.com/bendodson/MonthYearWheelPicker)
 
 ## Demo
 | Light Mode | Dark Mode |
