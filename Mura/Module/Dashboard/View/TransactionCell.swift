@@ -11,12 +11,22 @@ class TransactionCell: UITableViewCell {
     
     // MARK: - Variables
     static let identifier = "TransactionCell"
+    private var iconBgBottomConstraint: NSLayoutConstraint?
     
     // MARK: - UI Components
     private let transactionIconImage: UIImageView = {
         let iv = UIImageView()
-        iv.image = UIImage(named: "IncomeIcon")
+        iv.image = UIImage(systemName: "fork.knife")
+        iv.tintColor = UIColor.main
         iv.contentMode = .scaleAspectFit
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        return iv
+    }()
+    
+    private let transactionIconBg: UIView = {
+        let iv = UIView()
+        iv.layer.cornerRadius = 12
+        iv.backgroundColor = UIColor.main20
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
@@ -78,21 +88,27 @@ class TransactionCell: UITableViewCell {
         vstackCategoryNoteLabel.addArrangedSubview(categoryLabel)
         vstackCategoryNoteLabel.addArrangedSubview(noteLabel)
         
+        contentView.addSubview(transactionIconBg)
         contentView.addSubview(transactionIconImage)
         contentView.addSubview(vstackCategoryNoteLabel)
         contentView.addSubview(amountLabel)
         
+        iconBgBottomConstraint = transactionIconBg.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        
         NSLayoutConstraint.activate([
-            transactionIconImage.widthAnchor.constraint(equalToConstant: 40),
-            transactionIconImage.heightAnchor.constraint(equalToConstant: 40),
-            transactionIconImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            transactionIconImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            transactionIconImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            transactionIconBg.widthAnchor.constraint(equalToConstant: 40),
+            transactionIconBg.heightAnchor.constraint(equalToConstant: 40),
+            transactionIconBg.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            transactionIconBg.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            iconBgBottomConstraint!,
             
-            vstackCategoryNoteLabel.centerYAnchor.constraint(equalTo: transactionIconImage.centerYAnchor),
-            vstackCategoryNoteLabel.leadingAnchor.constraint(equalTo: transactionIconImage.trailingAnchor, constant: 10),
+            transactionIconImage.centerYAnchor.constraint(equalTo: transactionIconBg.centerYAnchor),
+            transactionIconImage.centerXAnchor.constraint(equalTo: transactionIconBg.centerXAnchor),
             
-            amountLabel.centerYAnchor.constraint(equalTo: transactionIconImage.centerYAnchor),
+            vstackCategoryNoteLabel.centerYAnchor.constraint(equalTo: transactionIconBg.centerYAnchor),
+            vstackCategoryNoteLabel.leadingAnchor.constraint(equalTo: transactionIconBg.trailingAnchor, constant: 10),
+            
+            amountLabel.centerYAnchor.constraint(equalTo: transactionIconBg.centerYAnchor),
             amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12)
         ])
         
@@ -102,17 +118,19 @@ class TransactionCell: UITableViewCell {
         self.layer.cornerRadius = 0
         self.clipsToBounds = false
         self.layer.maskedCorners = []
+        iconBgBottomConstraint?.constant = 0
     }
     
     func setupLastCell() {
         self.layer.cornerRadius = 15
         self.clipsToBounds = true
         self.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        self.transactionIconImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
+        iconBgBottomConstraint?.constant = -12
     }
     
     func configure(with transaction: Transaction) {
         self.categoryLabel.text = transaction.category.name
+        self.transactionIconImage.image = UIImage(systemName: transaction.category.icon)
         self.amountLabel.text = transaction.amount.formatToLocalizedDecimal()
         
         if transaction.amount < 0 {
@@ -120,13 +138,6 @@ class TransactionCell: UITableViewCell {
         } else {
             amountLabel.textColor = UIColor.main
         }
-        
-        if transaction.type == .expense {
-            self.transactionIconImage.image = UIImage(named: "ExpenseIcon")
-            self.transactionIconImage.setImageColor(color: UIColor.main)
-        } else {
-            self.transactionIconImage.image = UIImage(named: "IncomeIcon")
-            self.transactionIconImage.setImageColor(color: UIColor.main)
-        }
     }
 }
+
