@@ -137,9 +137,9 @@ class DashboardViewController: UIViewController {
     private func setupRx() {
         viewModel.groupedTransactions
             .filter({ [weak self] groupedTransactions in
-                DispatchQueue.main.async { self?.dashboardTableView.reloadData() }
-                if groupedTransactions.isEmpty {
-                    print("[d] section data empty")
+                DispatchQueue.main.async {
+                    self?.dashboardTableView.reloadData()
+                    self?.dashboardTableViewHeader.handleEmptyState(groupedTransactions.isEmpty)
                 }
                 self?.dashboardTableViewHeader.updateReportInfo(with: groupedTransactions, in: self!.selectedMonthYear)
                 return true

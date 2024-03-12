@@ -43,5 +43,9 @@ extension UIColor {
     static var separator: UIColor {
         UIColor(named: "SeparatorColor")!
     }
+    
+    static var cellSelected: UIColor {
+        UIColor(named: "CellSelectedColor")!
+    }
 }
 

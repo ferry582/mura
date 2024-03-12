@@ -13,6 +13,8 @@ class DashboardHeaderView: UIView {
     // MARK: Variables
     private let viewModel = ReportViewModel()
     private let disposeBag = DisposeBag()
+    private var emptyLabelTopConstraint: NSLayoutConstraint?
+    private var transactionTitleBottomConstraint: NSLayoutConstraint?
     var didTapDateButton: (() -> Void)?
     
     // MARK: - LifeCycle
@@ -201,6 +203,17 @@ class DashboardHeaderView: UIView {
         return label
     }()
     
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No Transaction\nTap + to add transaction"
+        label.numberOfLines = 2
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = UIColor.textMain
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     // MARK: - UI Set Up
     private func setupView() {
         self.addSubview(dateButton)
@@ -221,6 +234,10 @@ class DashboardHeaderView: UIView {
         addSubview(vstackBalanceCard)
         addSubview(hstackExpenseIncomeCard)
         addSubview(transactionTitleLabel)
+        addSubview(emptyLabel)
+        
+        emptyLabelTopConstraint = emptyLabel.topAnchor.constraint(equalTo: transactionTitleLabel.bottomAnchor, constant: 80)
+        transactionTitleBottomConstraint = transactionTitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         
         NSLayoutConstraint.activate([
             dateButton.topAnchor.constraint(equalTo: topAnchor, constant: 10),
@@ -243,8 +260,11 @@ class DashboardHeaderView: UIView {
             
             transactionTitleLabel.topAnchor.constraint(equalTo: hstackExpenseIncomeCard.bottomAnchor, constant: 25),
             transactionTitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            transactionTitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            transactionTitleBottomConstraint!,
             
+            emptyLabelTopConstraint!,
+            emptyLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            emptyLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
         ])
     }
     
@@ -290,6 +310,14 @@ class DashboardHeaderView: UIView {
     
     func updateSelectedMonthYear(with selectedMonthYear: Date) {
         dateButton.setTitle(selectedMonthYear.convertToMonthYearString(), for: .normal)
+    }
+    
+    func handleEmptyState(_ isEmpty: Bool) {
+        emptyLabel.isHidden = !isEmpty
+        transactionTitleLabel.isHidden = isEmpty
+        transactionTitleBottomConstraint?.isActive = !isEmpty
+        emptyLabelTopConstraint?.isActive = isEmpty
+        layoutIfNeeded()
     }
 }
 

@@ -28,6 +28,7 @@ struct Category: Equatable {
         Category(id: 9, name: "Groceries", icon: "basket.fill"),
         Category(id: 10, name: "Bills", icon: "doc.plaintext.fill"),
         Category(id: 11, name: "Sports", icon: "tennis.racket"),
+        Category(id: 12, name: "Religious", icon: "book.fill"),
         otherCategory
     ]
     
@@ -38,6 +39,7 @@ struct Category: Equatable {
         Category(id: 3, name: "Investment", icon: "chart.line.uptrend.xyaxis"),
         Category(id: 4, name: "Interest", icon: "percent"),
         Category(id: 5, name: "Cashback", icon: "arrow.counterclockwise"),
+        Category(id: 6, name: "Bonus", icon: "rosette"),
         otherCategory
     ]
     

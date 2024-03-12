@@ -13,3 +13,5 @@ BUILD_NUMBER = 1
 PRODUCT_BUNDLE_IDENTIFIER = com.ferry.dev.Mura
 PRODUCT_NAME = Mura-Dev
 IPHONEOS_DEPLOYMENT_TARGET = 15.0
+INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.finance
+INFOPLIST_KEY_CFBundleDisplayName = "Mura-Dev"

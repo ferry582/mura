@@ -211,7 +211,7 @@ class TransactionFormTableView: UITableView {
     // MARK: Actions
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        self.endEditing(true) // Handle keyboard dismissal when the user taps outside the UITextField
+        self.endEditing(true)
     }
     
     @objc private func typeSegmentedChanged() {
@@ -275,7 +275,6 @@ class TransactionFormTableView: UITableView {
         }
         return convertedAmount
     }
-    
 }
 
 extension TransactionFormTableView: UITextFieldDelegate {
@@ -359,6 +358,10 @@ extension TransactionFormTableView: UITableViewDelegate, UITableViewDataSource {
         } else if totalRows - 1 == indexPath.row {
             cell.setupLastRow()
         }
+        
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = UIColor.cellSelected
+        cell.selectedBackgroundView = bgColorView
         
         return cell
     }
